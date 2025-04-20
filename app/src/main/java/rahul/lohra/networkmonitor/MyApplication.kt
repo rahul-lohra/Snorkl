@@ -2,6 +2,8 @@ package rahul.lohra.networkmonitor
 
 import android.app.Application
 import android.util.Log
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -9,7 +11,9 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import okio.ByteString
 import rahul.lohra.networkinspector.InspectingWebSocketListener
+import rahul.lohra.networkinspector.InspectorLog
 import rahul.lohra.networkinspector.NetworkLoggerInterceptor
 import rahul.lohra.networkinspector.Util
 import rahul.lohra.networkinspector.WebSocketServerManager
@@ -59,20 +63,27 @@ fun OkHttpClient.newWebSocketWithInspector(
 object WebsocketClient {
     private val client = OkHttpClient()
     private var webSocket: WebSocket? = null
+    private val requestUrl = "wss://echo.websocket.events"
 
     fun connectAndTest() {
         val request = Request.Builder()
-            .url("wss://echo.websocket.events")
+            .url(requestUrl)
             .build()
 
         val listener = object : WebSocketListener() {
             override fun onOpen(ws: WebSocket, response: Response) {
                 Log.d("WS", "✅ Connected to WebSocket")
+                sendLog("WebSocket OPEN", response.body?.string().orEmpty())
                 webSocket = ws
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                sendLog("WebSocket ↓ (binary)", bytes.hex())
             }
 
             override fun onMessage(ws: WebSocket, text: String) {
                 Log.d("WS", "📥 Received: $text")
+                sendLog("WebSocket ↓", text)
             }
 
             override fun onFailure(ws: WebSocket, t: Throwable, response: Response?) {
@@ -110,5 +121,21 @@ object WebsocketClient {
 
             // other events...
         })
+    }
+
+    private fun sendLog(direction: String, body: String = "") {
+
+        Log.d("InspectingWebSocketListener", "sendLog: direction:$direction, body:$body")
+
+        val log = InspectorLog.Network(
+            requestUrl = requestUrl,
+            direction = direction,
+            body = body,
+            timestamp = System.currentTimeMillis()
+        )
+
+        GlobalScope.launch {
+            WebSocketServerManager.send(log)
+        }
     }
 }
