@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>Network Logs</title></head>
+<body>
+<h2>Live Network Logs</h2>
+<ul id="logs"></ul>
+<script>
+    const socket = new WebSocket("ws://192.168.1.7:9394/logs");
+    socket.onmessage = (event) => {
+      const log = JSON.parse(event.data);
+      const li = document.createElement("li");
+      li.innerHTML = `<b>${log.method}</b> ${log.url} [${log.responseCode}] <br/>${log.durationMs}ms<br/><pre>${log.body}</pre><hr/>`;
+      document.getElementById("logs").prepend(li);
+    };
+</script>
+</body>
+</html>

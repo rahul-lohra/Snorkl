@@ -1,0 +1,29 @@
+package rahul.lohra.networkinspector
+
+import kotlinx.serialization.Serializable
+import java.util.UUID
+
+@Serializable
+data class NetworkLogData(
+    val id: String = UUID.randomUUID().toString(),
+    val timestamp: Long = System.currentTimeMillis(),
+    val url: String,
+    val method: String,
+    val requestHeaders: Map<String, List<String>>,
+    val responseCode: Int,
+    val responseHeaders: Map<String, List<String>>,
+    val body: String,
+    val durationMs: Long
+)
+
+sealed class InspectorLog {
+    @Serializable
+    data class Network(
+        val requestUrl: String,
+        val method: String? = null,
+        val code: Int? = null,
+        val direction: String, // e.g., "Request", "Response", "WebSocket OPEN", etc.
+        val body: String? = null,
+        val timestamp: Long = System.currentTimeMillis()
+    ) : InspectorLog()
+}

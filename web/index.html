@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Network Inspector</title>
+    <style>
+        body {
+          font-family: monospace;
+          padding: 1rem;
+          background: #121212;
+          color: #eee;
+        }
+
+        .log-entry {
+          margin: 8px 0;
+          padding: 10px;
+          border-radius: 6px;
+          transition: background 0.3s;
+          position: relative;
+        }
+
+        .http {
+          background-color: #1e1e1e;
+          border-left: 4px solid #4caf50;
+        }
+
+        .ws {
+          background-color: #1a1a1a;
+          border-left: 4px solid #2196f3;
+        }
+
+        .ws-open {
+          border-left-color: #03a9f4;
+        }
+
+        .ws-error {
+          border-left-color: #f44336;
+        }
+
+        .url {
+          font-weight: bold;
+          color: #ff9800;
+          margin-bottom: 4px;
+        }
+
+        .timestamp {
+          font-size: 0.8em;
+          color: #bbb;
+          position: absolute;
+          top: 10px;
+          right: 12px;
+        }
+
+        .body {
+          white-space: pre-wrap;
+          margin-top: 6px;
+          color: #ccc;
+          max-height: 200px;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .collapsed .body {
+          max-height: 0;
+          overflow: hidden;
+        }
+
+        .toggle-button {
+          background: none;
+          color: #03a9f4;
+          border: none;
+          cursor: pointer;
+          font-size: 0.9em;
+          margin-top: 6px;
+          padding: 0;
+          text-align: left;
+        }
+
+        #filter {
+          margin-bottom: 12px;
+          padding: 6px;
+          width: 100%;
+          max-width: 600px;
+        }
+
+        #export-btn {
+          margin-left: 10px;
+          padding: 6px 12px;
+          background: #333;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        #export-btn:hover {
+          background: #444;
+        }
+    </style>
+</head>
+<body>
+
+<input id="filter" type="text" placeholder="🔍 Filter by type or URL (e.g., ws, http, /api/login)" />
+<button id="export-btn">⬇️ Export Logs</button>
+
+<div id="log"></div>
+
+<script>
+    const logContainer = document.getElementById("log");
+    const filterInput = document.getElementById("filter");
+    const exportBtn = document.getElementById("export-btn");
+
+    const socket = new WebSocket("ws://192.168.1.7:9394:9394/logs"); // Replace with phone IP
+    const allLogs = []; // 🔁 1. In-memory storage
+
+    socket.onmessage = function(event) {
+      const log = JSON.parse(event.data);
+      log.timestamp = new Date().toLocaleTimeString(); // ⏰ 4. Timestamp
+      allLogs.unshift(log);
+      renderLogs();
+    };
+
+    filterInput.addEventListener("input", renderLogs);
+
+    exportBtn.addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(allLogs, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "network-logs.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    function renderLogs() {
+      const filter = filterInput.value.toLowerCase();
+      logContainer.innerHTML = "";
+
+      const filteredLogs = allLogs.filter(log =>
+        log.direction.toLowerCase().includes(filter) ||
+        log.requestUrl.toLowerCase().includes(filter)
+      );
+
+      for (const log of filteredLogs) {
+        logContainer.appendChild(createLogEntry(log));
+      }
+    }
+
+    function createLogEntry(log) {
+      const entry = document.createElement("div");
+      const direction = log.direction?.toLowerCase() || "";
+      const url = log.requestUrl || "";
+      let body = log.body || "";
+
+      entry.classList.add("log-entry");
+      if (direction.includes("websocket")) {
+        entry.classList.add("ws");
+        if (direction.includes("open")) entry.classList.add("ws-open");
+        if (direction.includes("error")) entry.classList.add("ws-error");
+      } else {
+        entry.classList.add("http");
+      }
+
+      // 📦 3. Pretty JSON
+      try {
+        const parsed = JSON.parse(body);
+        body = JSON.stringify(parsed, null, 2);
+      } catch (_) { }
+
+      const bodyDiv = document.createElement("div");
+      bodyDiv.classList.add("body");
+      bodyDiv.textContent = body;
+
+      const toggleBtn = document.createElement("button");
+      toggleBtn.classList.add("toggle-button");
+      toggleBtn.textContent = "Toggle Body";
+      toggleBtn.onclick = () => entry.classList.toggle("collapsed");
+
+      entry.innerHTML = `
+        <div class="url">${log.direction.toUpperCase()} → ${url}</div>
+        <div class="timestamp">${log.timestamp}</div>
+      `;
+
+      entry.appendChild(bodyDiv);
+      entry.appendChild(toggleBtn);
+
+      return entry;
+    }
+</script>
+</body>
+</html>

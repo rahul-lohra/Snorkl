@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        connect-src 'self' ws://*:*;
+        script-src 'self' 'unsafe-inline';
+    ">    
+    <title>Android WebSocket Inspector</title>
+    <style>
+        :root {
+            --request-color: #d4edff;
+            --response-color: #d5f5e3;
+            --websocket-color: #fff3d9;
+            --error-color: #ffdddd;
+            --system-color: #f0f0f0;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        #header {
+            background-color: #6200ee;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #controls {
+            background-color: white;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        button {
+            background-color: #6200ee;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+        }
+        select, input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #logs {
+            padding: 10px;
+        }
+        .log-entry {
+            margin-bottom: 10px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .log-header {
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+        .log-body {
+            padding: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .request { background-color: var(--request-color); }
+        .response { background-color: var(--response-color); }
+        .websocket { background-color: var(--websocket-color); }
+        .error { background-color: var(--error-color); }
+        .system { background-color: var(--system-color); }
+        .timestamp {
+            color: #666;
+            font-size: 12px;
+        }
+        #status {
+            font-size: 14px;
+            padding: 5px 10px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 12px;
+        }
+        .disconnected { background-color: #f44336; }
+        .connected { background-color: #4caf50; }
+    </style>
+</head>
+<body>
+<div id="header">
+    <h2>Android WebSocket Inspector</h2>
+    <div id="status" class="disconnected">Disconnected</div>
+</div>
+
+<div id="controls">
+    <button id="connectBtn">Connect</button>
+    <button id="clearBtn">Clear Logs</button>
+    <select id="filter">
+        <option value="all">All Traffic</option>
+        <option value="websocket">WebSocket Only</option>
+        <option value="error">Errors Only</option>
+    </select>
+    <input type="text" id="search" placeholder="Search logs...">
+</div>
+
+<div id="logs"></div>
+
+<script>
+    class WebSocketInspector {
+        constructor() {
+            this.ws = null;
+            this.logs = [];
+            this.filter = 'all';
+            this.searchTerm = '';
+
+            // Auto-detect Android device IP (requires your devices to be on same network)
+            this.deviceIp = this.detectDeviceIp() || '192.168.1.100'; // Fallback IP
+
+            this.initElements();
+            this.bindEvents();
+        }
+
+        initElements() {
+            this.connectBtn = document.getElementById('connectBtn');
+            this.clearBtn = document.getElementById('clearBtn');
+            this.filterSelect = document.getElementById('filter');
+            this.searchInput = document.getElementById('search');
+            this.logsContainer = document.getElementById('logs');
+            this.statusIndicator = document.getElementById('status');
+        }
+
+        bindEvents() {
+            this.connectBtn.addEventListener('click', () => this.toggleConnection());
+            this.clearBtn.addEventListener('click', () => this.clearLogs());
+            this.filterSelect.addEventListener('change', (e) => {
+                this.filter = e.target.value;
+                this.renderLogs();
+            });
+            this.searchInput.addEventListener('input', (e) => {
+                this.searchTerm = e.target.value.toLowerCase();
+                this.renderLogs();
+            });
+        }
+
+        detectDeviceIp() {
+            // This is a simple heuristic - may need adjustment for your network
+            const hostname = window.location.hostname;
+            if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+                return hostname;
+            }
+            return null;
+        }
+
+        toggleConnection() {
+            if (this.ws) {
+                this.disconnect();
+            } else {
+                this.connect();
+            }
+        }
+
+        connect() {
+            const wsUrl = `ws://${this.deviceIp}:9394/logs`;
+            this.ws = new WebSocket(wsUrl);
+
+            this.ws.onopen = () => {
+                console.log("✅ Connected to WebSocket server");
+                this.updateStatus('connected', 'Connected');
+                this.addSystemMessage('Connected to WebSocket inspector');
+                this.connectBtn.textContent = 'Disconnect';
+            };
+
+            this.ws.onclose = () => {
+                this.updateStatus('disconnected', 'Disconnected');
+                this.addSystemMessage('Disconnected from WebSocket inspector');
+                this.connectBtn.textContent = 'Connect';
+                this.ws = null;
+            };
+
+            this.ws.onerror = (error) => {
+                console.error("WebSocket error:", error);
+                this.updateStatus('error', 'Connection Error');
+                this.addSystemMessage(`WebSocket error: ${error.message || 'Unknown error'}`, 'error');
+            };
+
+            this.ws.onmessage = (event) => {
+                try {
+                    console.log("📥 Received:", event.data);
+                    const log = JSON.parse(event.data);
+                    this.addLog(log);
+                } catch (e) {
+                    this.addSystemMessage(`Error parsing message: ${e.message}`, 'error');
+                }
+            };
+        }
+
+        disconnect() {
+            if (this.ws) {
+                this.ws.close();
+            }
+        }
+
+        updateStatus(status, text) {
+            this.statusIndicator.className = status;
+            this.statusIndicator.textContent = text;
+        }
+
+        addLog(log) {
+            log.timestamp = log.timestamp || Date.now();
+            this.logs.push(log);
+            this.renderLogs();
+        }
+
+        addSystemMessage(message, type = 'system') {
+            this.addLog({
+                type: type,
+                direction: 'System',
+                body: message,
+                timestamp: Date.now()
+            });
+        }
+
+        clearLogs() {
+            this.logs = [];
+            this.logsContainer.innerHTML = '';
+        }
+
+        renderLogs() {
+            this.logsContainer.innerHTML = '';
+
+            const filteredLogs = this.logs.filter(log => {
+                // Apply filter
+                if (this.filter === 'websocket' && !log.direction?.includes('WebSocket')) return false;
+                if (this.filter === 'error' && log.type !== 'error') return false;
+
+                // Apply search
+                if (this.searchTerm) {
+                    const logText = JSON.stringify(log).toLowerCase();
+                    return logText.includes(this.searchTerm);
+                }
+
+                return true;
+            });
+
+            filteredLogs.forEach(log => {
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${log.type || 'websocket'}`;
+
+                const date = new Date(log.timestamp);
+                const timeString = date.toLocaleTimeString();
+                const dateString = date.toLocaleDateString();
+
+                entry.innerHTML = `
+                    <div class="log-header">
+                        <div>
+                            <strong>${log.requestUrl || 'System'}</strong>
+                            ${log.direction ? `• ${log.direction}` : ''}
+                        </div>
+                        <div class="timestamp">${dateString} ${timeString}</div>
+                    </div>
+                    ${log.body ? `
+                    <div class="log-body">
+                        ${this.formatBody(log.body)}
+                    </div>
+                    ` : ''}
+                `;
+
+                this.logsContainer.appendChild(entry);
+            });
+
+            // Auto-scroll to bottom
+            this.logsContainer.scrollTop = this.logsContainer.scrollHeight;
+        }
+
+        formatBody(body) {
+            try {
+                // Try to pretty-print JSON
+                const parsed = JSON.parse(body);
+                return JSON.stringify(parsed, null, 2);
+            } catch (e) {
+                return body;
+            }
+        }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        new WebSocketInspector();
+    });
+</script>
+</body>
+</html>
