@@ -2,6 +2,7 @@ package rahul.lohra.networkinspector
 
 import android.content.Context
 import android.content.res.AssetManager
+import android.util.Log
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -92,9 +93,11 @@ object WebSocketManager {
                     webSocket("/logs") {
                         WebSocketManager.register(this)
                         try {
-//                            send(Frame.Text("SERVER: Connection established"))
+                            Log.d("Noob", "inside /logs")
+                            send(Frame.Text("SERVER: Connection established"))
                             for (frame in incoming) {
                                 // Optionally respond to client
+                                Log.d("Noob", "inside for loop of incoming")
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()

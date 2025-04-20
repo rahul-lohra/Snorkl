@@ -13,6 +13,7 @@ import rahul.lohra.networkinspector.InspectingWebSocketListener
 import rahul.lohra.networkinspector.NetworkLoggerInterceptor
 import rahul.lohra.networkinspector.Util
 import rahul.lohra.networkinspector.WebSocketManager
+import rahul.lohra.networkmonitor.NetworkClient.request
 import java.io.IOException
 
 class MyApplication : Application() {
@@ -21,7 +22,7 @@ class MyApplication : Application() {
         super.onCreate()
         WebSocketManager.startServer(this)
         Log.d("Inspector", "Phone IP: ${Util.getLocalIpAddress(this)}")
-        NetworkClient.observeWebsocket()
+        WebsocketManager.observeWebsocket()
     }
 }
 
@@ -43,21 +44,6 @@ object NetworkClient {
             override fun onResponse(call: Call, response: Response) {
                 Log.i("DemoCall", "Request successful: ${response.code}")
             }
-        })
-    }
-
-    fun observeWebsocket() {
-
-        val ws = client.newWebSocketWithInspector(request, object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                Log.d("App", "WebSocket connected!")
-            }
-
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                Log.d("App", "Received message: $text")
-            }
-
-            // other events...
         })
     }
 }
@@ -109,5 +95,20 @@ object WebsocketManager {
     fun close() {
         webSocket?.close(1000, "Closing from user")
         webSocket = null
+    }
+
+    fun observeWebsocket() {
+
+        val ws = client.newWebSocketWithInspector(request, object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                Log.d("App", "WebSocket connected!")
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                Log.d("App", "Received message: $text")
+            }
+
+            // other events...
+        })
     }
 }
