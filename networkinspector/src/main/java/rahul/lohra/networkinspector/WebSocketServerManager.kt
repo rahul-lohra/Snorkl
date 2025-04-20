@@ -110,6 +110,20 @@ object WebSocketServerManager {
                             )
                         }
                     }
+
+                    get("/inspector1") {
+                        val content = getTextFromAsset(context.assets,"web/index1.html")
+                        content.onSuccess {
+                            call.respondText(it, io.ktor.http.ContentType.Text.Html, HttpStatusCode.OK)
+                        }
+                        content.onFailure {
+                            call.respondText(
+                                it.message ?: "",
+                                io.ktor.http.ContentType.Text.Plain,
+                                io.ktor.http.HttpStatusCode.InternalServerError
+                            )
+                        }
+                    }
                 }
             }.start(wait = false)
         }
