@@ -88,10 +88,19 @@ object WebsocketClient {
 
             override fun onFailure(ws: WebSocket, t: Throwable, response: Response?) {
                 Log.e("WS", "❌ WebSocket error: ${t.message}", t)
+                sendLog("WebSocket ERROR", buildString {
+                    append(t.message)
+                    append("\n\nStack Trace:\n")
+                    append(t.stackTraceToString())
+                    response?.let {
+                        append("\n\nResponse: ${it.code} ${it.message}")
+                    }
+                })
             }
 
             override fun onClosed(ws: WebSocket, code: Int, reason: String) {
                 Log.d("WS", "✅ Closed: $reason")
+                sendLog("WebSocket CLOSED", "code=$code, reason=$reason")
                 webSocket = null
             }
         }
