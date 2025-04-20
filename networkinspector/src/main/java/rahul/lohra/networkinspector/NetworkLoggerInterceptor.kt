@@ -28,7 +28,7 @@ class NetworkLoggerInterceptor : Interceptor {
         )
 
         GlobalScope.launch {
-            WebSocketManager.broadcast(logData)
+            WebSocketServerManager.broadcast(logData)
         }
         return response
     }

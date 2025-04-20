@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -60,25 +59,25 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = {
-            NetworkClient.makeRequest()
+            RestClient.makeRequest()
         }) {
             Text("Make HTTP Call")
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = {
-            WebsocketManager.connectAndTest()
+            WebsocketClient.connectAndTest()
         }) {
             Text("Start WS")
         }
         Spacer(modifier = Modifier.width(4.dp))
         Button(onClick = {
-            WebsocketManager.sendMessage("Hello From Rahul")
+            WebsocketClient.sendMessage("Hello From Rahul")
         }) {
             Text("Send WS events")
         }
         Spacer(modifier = Modifier.width(4.dp))
         Button(onClick = {
-            WebsocketManager.close()
+            WebsocketClient.close()
         }) {
             Text("Close WS events")
         }

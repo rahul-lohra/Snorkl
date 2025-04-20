@@ -62,7 +62,7 @@ class InspectingWebSocketListener(
         )
 
         GlobalScope.launch {
-            WebSocketManager.send(log)
+            WebSocketServerManager.send(log)
         }
     }
 }

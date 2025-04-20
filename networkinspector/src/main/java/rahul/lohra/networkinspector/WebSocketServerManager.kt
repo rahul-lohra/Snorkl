@@ -6,19 +6,9 @@ import android.util.Log
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.http.content.default
-import io.ktor.server.http.content.files
-import io.ktor.server.http.content.resources
-import io.ktor.server.http.content.static
-import io.ktor.server.http.content.staticFiles
-import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondBytes
-import io.ktor.server.response.respondOutputStream
-import io.ktor.server.response.respondRedirect
 import io.ktor.server.response.respondText
-import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.DefaultWebSocketServerSession
@@ -31,15 +21,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.io.IOException
 import java.io.BufferedReader
-import java.io.File
 import java.io.InputStreamReader
 import kotlin.time.Duration.Companion.seconds
 import java.util.Collections
 import kotlin.Result
 
-object WebSocketManager {
+object WebSocketServerManager {
     private val clients = Collections.synchronizedSet(mutableSetOf<DefaultWebSocketServerSession>())
 
     private val wsMutex = Mutex()
@@ -91,7 +79,7 @@ object WebSocketManager {
 
                 routing {
                     webSocket("/logs") {
-                        WebSocketManager.register(this)
+                        WebSocketServerManager.register(this)
                         try {
                             Log.d("Noob", "inside /logs")
                             send(Frame.Text("SERVER: Connection established"))
@@ -102,7 +90,7 @@ object WebSocketManager {
                         } catch (e: Exception) {
                             e.printStackTrace()
                         } finally {
-                            WebSocketManager.unregister(this)
+                            WebSocketServerManager.unregister(this)
                         }
                     }
 

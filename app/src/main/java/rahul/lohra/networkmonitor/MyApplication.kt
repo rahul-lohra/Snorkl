@@ -12,21 +12,21 @@ import okhttp3.WebSocketListener
 import rahul.lohra.networkinspector.InspectingWebSocketListener
 import rahul.lohra.networkinspector.NetworkLoggerInterceptor
 import rahul.lohra.networkinspector.Util
-import rahul.lohra.networkinspector.WebSocketManager
-import rahul.lohra.networkmonitor.NetworkClient.request
+import rahul.lohra.networkinspector.WebSocketServerManager
+import rahul.lohra.networkmonitor.RestClient.request
 import java.io.IOException
 
 class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        WebSocketManager.startServer(this)
+        WebSocketServerManager.startServer(this)
         Log.d("Inspector", "Phone IP: ${Util.getLocalIpAddress(this)}")
-        WebsocketManager.observeWebsocket()
+//        WebsocketManager.observeWebsocket()
     }
 }
 
-object NetworkClient {
+object RestClient {
     val client = OkHttpClient.Builder()
         .addInterceptor(NetworkLoggerInterceptor())
         .build()
@@ -56,7 +56,7 @@ fun OkHttpClient.newWebSocketWithInspector(
     return this.newWebSocket(request, inspectingListener)
 }
 
-object WebsocketManager {
+object WebsocketClient {
     private val client = OkHttpClient()
     private var webSocket: WebSocket? = null
 
