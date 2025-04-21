@@ -117,21 +117,6 @@ object WebsocketClient {
         webSocket = null
     }
 
-    fun observeWebsocket() {
-
-        val ws = client.newWebSocketWithInspector(request, object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                Log.d("App", "WebSocket connected!")
-            }
-
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                Log.d("App", "Received message: $text")
-            }
-
-            // other events...
-        })
-    }
-
     private fun sendLog(direction: String, body: String = "") {
 
         Log.d("InspectingWebSocketListener", "sendLog: direction:$direction, body:$body")
