@@ -61,7 +61,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "rahul.lohra.networkinspector"
                 artifactId = "networkinspector"
-                version = "0.0.2"
+                version = "0.0.3"
             }
         }
         repositories {
