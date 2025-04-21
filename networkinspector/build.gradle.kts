@@ -45,21 +45,13 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.okhttp)
     implementation(libs.gson)
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.websockets)
-
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.serialization.json)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 afterEvaluate {
@@ -69,7 +61,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "rahul.lohra.networkinspector"
                 artifactId = "networkinspector"
-                version = "0.0.1"
+                version = "0.0.2"
             }
         }
         repositories {
