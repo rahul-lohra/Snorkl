@@ -1,7 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     kotlin("plugin.serialization") version "1.9.10"
+    alias(libs.plugins.maven.publish)
+}
+// Add this at the top of the file
+val localProperties = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -53,4 +60,27 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "rahul.lohra.networkinspector"
+                artifactId = "networkinspector"
+                version = "0.0.1"
+            }
+        }
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/rahul-lohra/API-WebSocket-Viewer")
+                credentials {
+                    username = localProperties.getProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
+                    password = localProperties.getProperty("gpr.token") as String? ?: System.getenv("GPR_TOKEN")
+                }
+            }
+        }
+    }
 }
