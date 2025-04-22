@@ -21,9 +21,9 @@ sealed class InspectorLog {
     data class Network(
         val requestUrl: String,
         val method: String? = null,
-        val code: Int? = null,
         val direction: String, // e.g., "Request", "Response", "WebSocket OPEN", etc.
         val body: String? = null,
-        val timestamp: Long = System.currentTimeMillis()
+        val timestamp: Long = System.currentTimeMillis(),
+        val responseCode: Int = 0,
     ) : InspectorLog()
 }

@@ -9,94 +9,192 @@
         script-src 'self' 'unsafe-inline';
     ">    
     <title>Android WebSocket Inspector</title>
-    <style>
-        :root {
-            --request-color: #d4edff;
-            --response-color: #d5f5e3;
-            --websocket-color: #fff3d9;
-            --error-color: #ffdddd;
-            --system-color: #f0f0f0;
-        }
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-        #header {
-            background-color: #6200ee;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        #controls {
-            background-color: white;
-            padding: 10px;
-            display: flex;
-            gap: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        button {
-            background-color: #6200ee;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        button:disabled {
-            background-color: #cccccc;
-        }
-        select, input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        #logs {
-            padding: 10px;
-        }
-        .log-entry {
-            margin-bottom: 10px;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+<style>
+    :root {
+        --request-color: #d4edff;
+        --response-color: #d5f5e3;
+        --websocket-color: #fff3d9;
+        --error-color: #ffdddd;
+        --system-color: #f0f0f0;
+        --divider-color: rgba(0, 0, 0, 0.08);
+        --primary-color: #6200ee;
+    }
+    
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+    }
+    
+    #header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    #controls {
+        background-color: white;
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        border-bottom: 1px solid #ddd;
+        flex-wrap: wrap;
+    }
+    
+    button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+    
+    button:hover:not(:disabled) {
+        background-color: #7c29ff;
+    }
+    
+    button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+    
+    select, input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        min-width: 120px;
+    }
+    
+    #logs {
+        padding: 10px;
+    }
+    
+    .log-entry {
+        margin-bottom: 10px;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        background-color: white;
+    }
+    
+    .log-header {
+        padding: 10px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+    }
+    
+    .log-header > div:first-child {
+        flex-grow: 1;
+        margin-right: 15px;
+    }
+    
+    .log-body-container {
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .log-body {
+        padding: 12px;
+        white-space: pre-wrap;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        transition: max-height 0.3s ease;
+        background-color: inherit;
+    }
+    
+    .log-body.collapsed {
+        max-height: 4.5em; /* 3 lines * 1.5 line-height */
+        overflow: hidden;
+        mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    }
+    
+    .toggle-body {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        padding: 4px 12px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+        gap: 4px;
+    }
+    
+    .toggle-body:hover {
+        background-color: rgba(98, 0, 238, 0.05);
+    }
+    
+    .toggle-body::after {
+        content: "▼";
+        font-size: 10px;
+        transition: transform 0.2s;
+    }
+    
+    .toggle-body[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+    }
+    
+    .log-divider {
+        height: 1px;
+        background-color: var(--divider-color);
+        margin: 0 12px;
+    }
+    
+    /* Type-specific backgrounds */
+    .request .log-header { background-color: var(--request-color); }
+    .response .log-header { background-color: var(--response-color); }
+    .websocket .log-header { background-color: var(--websocket-color); }
+    .error .log-header { background-color: var(--error-color); }
+    .system .log-header { background-color: var(--system-color); }
+    
+    .request .log-body { background-color: color-mix(in srgb, var(--request-color) 90%, white); }
+    .response .log-body { background-color: color-mix(in srgb, var(--response-color) 90%, white); }
+    .websocket .log-body { background-color: color-mix(in srgb, var(--websocket-color) 90%, white); }
+    .error .log-body { background-color: color-mix(in srgb, var(--error-color) 90%, white); }
+    .system .log-body { background-color: color-mix(in srgb, var(--system-color) 90%, white); }
+    
+    .timestamp {
+        color: #666;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    
+    #status {
+        font-size: 14px;
+        padding: 5px 10px;
+        background-color: rgba(255,255,255,0.2);
+        border-radius: 12px;
+    }
+    
+    .disconnected { background-color: #f44336; }
+    .connected { background-color: #4caf50; }
+    
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
         .log-header {
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: 500;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
         }
-        .log-body {
-            padding: 10px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 13px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .request { background-color: var(--request-color); }
-        .response { background-color: var(--response-color); }
-        .websocket { background-color: var(--websocket-color); }
-        .error { background-color: var(--error-color); }
-        .system { background-color: var(--system-color); }
+        
         .timestamp {
-            color: #666;
-            font-size: 12px;
+            align-self: flex-end;
         }
-        #status {
-            font-size: 14px;
-            padding: 5px 10px;
-            background-color: rgba(255,255,255,0.2);
-            border-radius: 12px;
-        }
-        .disconnected { background-color: #f44336; }
-        .connected { background-color: #4caf50; }
-    </style>
+    }
+</style>
 </head>
 <body>
 <div id="header">
@@ -254,7 +352,7 @@
                 return true;
             });
 
-            filteredLogs.forEach(log => {
+            filteredLogs.forEach((log, index) => {
                 const entry = document.createElement('div');
                 entry.className = `log-entry ${log.type || 'websocket'}`;
 
@@ -265,23 +363,59 @@
                 entry.innerHTML = `
                     <div class="log-header">
                         <div>
-                            <strong>${log.requestUrl || 'System'}</strong>
+                            <strong>${log.requestUrl || 'System'}</strong> <strong>${log.method}</strong>${log.responseCode? ` Response Code: <strong>${log.responseCode}</strong>`: '' }
                             ${log.direction ? `• ${log.direction}` : ''}
                         </div>
                         <div class="timestamp">${dateString} ${timeString}</div>
                     </div>
                     ${log.body ? `
-                    <div class="log-body">
-                        ${this.formatBody(log.body)}
+                    <div class="log-body-container">
+                        <div class="log-body">${this.formatBody(log.body)}</div>
                     </div>
                     ` : ''}
+                    ${index < filteredLogs.length - 1 ? '<div class="log-divider"></div>' : ''}
                 `;
 
                 this.logsContainer.appendChild(entry);
+
+                if (log.body) {
+                    setTimeout(() => this.checkBodySize(entry), 0);
+                }
             });
 
             // Auto-scroll to bottom
             this.logsContainer.scrollTop = this.logsContainer.scrollHeight;
+        }
+
+        checkBodySize(entryElement) {
+            const container = entryElement.querySelector('.log-body-container');
+            if (!container) return;
+            
+            const bodyElement = entryElement.querySelector('.log-body');
+            const lineHeight = parseInt(getComputedStyle(bodyElement).lineHeight);
+            const maxHeight = lineHeight * 3;
+            
+            if (bodyElement.scrollHeight > maxHeight) {
+                container.innerHTML = `
+                    <div class="log-body collapsed" style="max-height: ${maxHeight}px">
+                        ${bodyElement.innerHTML}
+                    </div>
+                    <button class="toggle-body">Show more ▼</button>
+                `;
+                
+                container.querySelector('.toggle-body').addEventListener('click', function() {
+                    const body = this.previousElementSibling;
+                    if (body.classList.contains('collapsed')) {
+                        body.classList.remove('collapsed');
+                        body.style.maxHeight = 'none';
+                        this.textContent = 'Show less ▲';
+                    } else {
+                        body.classList.add('collapsed');
+                        body.style.maxHeight = `${maxHeight}px`;
+                        this.textContent = 'Show more ▼';
+                    }
+                });
+            }
         }
 
         formatBody(body) {
