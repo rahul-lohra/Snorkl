@@ -126,7 +126,7 @@
             this.searchTerm = '';
 
             // Auto-detect Android device IP (requires your devices to be on same network)
-            this.deviceIp = this.detectDeviceIp() || '192.168.1.12'; // Fallback IP
+            this.deviceIpWithPort = this.detectDeviceIp() || '192.168.1.12:9394'; // Fallback IP
 
             this.initElements();
             this.bindEvents();
@@ -156,7 +156,7 @@
 
         detectDeviceIp() {
             // This is a simple heuristic - may need adjustment for your network
-            const hostname = window.location.hostname;
+            const hostname = window.location.host;
             if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
                 return hostname;
             }
@@ -172,7 +172,7 @@
         }
 
         connect() {
-            const wsUrl = `ws://${this.deviceIp}:9394/logs`;
+            const wsUrl = `ws://${this.deviceIpWithPort}/logs`;
             this.ws = new WebSocket(wsUrl);
 
             this.ws.onopen = () => {

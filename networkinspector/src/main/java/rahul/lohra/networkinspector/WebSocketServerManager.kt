@@ -2,8 +2,10 @@ package rahul.lohra.networkinspector
 
 import android.content.Context
 import android.content.res.AssetManager
+import android.os.Build
 import android.util.Log
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -21,6 +23,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.encodeToString
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.time.Duration.Companion.seconds
@@ -67,12 +70,16 @@ object WebSocketServerManager {
         }
     }
 
-    fun startServer(context: Context) {
+    fun startServer(context: Context, port: Int = 9394) {
         GlobalScope.launch {
-            embeddedServer(Netty, port = 9394) {
+            embeddedServer(Netty, port) {
                 install(WebSockets) {
-                    pingPeriod = 15.seconds
-                    timeout = 30.seconds
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        pingPeriod = java.time.Duration.ofSeconds(15)
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        timeout = java.time.Duration.ofSeconds(30)
+                    }
                     maxFrameSize = Long.MAX_VALUE
                     masking = false
                 }

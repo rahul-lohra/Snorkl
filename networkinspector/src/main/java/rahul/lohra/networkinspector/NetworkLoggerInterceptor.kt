@@ -18,7 +18,7 @@ class NetworkLoggerInterceptor : Interceptor {
         val body = response.peekBody(1024 * 1024).string()
 
         val logData = NetworkLogData(
-            url = request.url.toString(),
+            requestUrl = request.url.toString(),
             method = request.method,
             requestHeaders = request.headers.toMultimap(),
             responseCode = response.code,

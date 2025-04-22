@@ -41,6 +41,14 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    configurations.all {
+        resolutionStrategy.force(
+            "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.25", // Replace with your desired 1.9.x version
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.25",   // If you are using JDK 8 stdlib
+            "org.jetbrains.kotlin:kotlin-stdlib:1.9.25"      // If you are using the platform stdlib
+        )
+    }
 }
 
 dependencies {
@@ -55,14 +63,23 @@ dependencies {
 }
 
 afterEvaluate {
+    val artifactVersion = "0.0.5-kotlin1.9"
+
     publishing {
         publications {
-            create<MavenPublication>("release") {
+            create<MavenPublication>("kotlin2.0") {
                 from(components["release"])
                 groupId = "rahul.lohra.networkinspector"
                 artifactId = "networkinspector"
-                version = "0.0.3"
+                version = artifactVersion
             }
+            create<MavenPublication>("kotlin1.9") {
+                from(components["release"])
+                groupId = "rahul.lohra.networkinspector"
+                artifactId = "networkinspector"
+                version = artifactVersion
+            }
+
         }
         repositories {
             maven {

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+//    alias(libs.plugins.kotlin.compose) apply false //Enable when kotlin version is 2.0+
 }
 
 android {
@@ -42,6 +42,9 @@ android {
             excludes += "META-INF/io.netty.versions.properties"
             excludes += "META-INF/INDEX.LIST"
         }
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 }
 

@@ -23,7 +23,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        WebSocketServerManager.startServer(this)
+        WebSocketServerManager.startServer(this, 9396)
         Log.d("Inspector", "Phone IP: ${Util.getLocalIpAddress(this)}")
     }
 }

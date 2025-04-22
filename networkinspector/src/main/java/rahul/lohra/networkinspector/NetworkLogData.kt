@@ -7,7 +7,7 @@ import java.util.UUID
 data class NetworkLogData(
     val id: String = UUID.randomUUID().toString(),
     val timestamp: Long = System.currentTimeMillis(),
-    val url: String,
+    val requestUrl: String,
     val method: String,
     val requestHeaders: Map<String, List<String>>,
     val responseCode: Int,
