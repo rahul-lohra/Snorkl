@@ -13,7 +13,8 @@ data class NetworkLogData(
     val responseCode: Int,
     val responseHeaders: Map<String, List<String>>,
     val body: String,
-    val durationMs: Long
+    val durationMs: Long,
+    val networkType: String = "rest"
 )
 
 sealed class InspectorLog {
@@ -25,5 +26,6 @@ sealed class InspectorLog {
         val body: String? = null,
         val timestamp: Long = System.currentTimeMillis(),
         val responseCode: Int = 0,
+        val networkType: String = "ws"
     ) : InspectorLog()
 }
