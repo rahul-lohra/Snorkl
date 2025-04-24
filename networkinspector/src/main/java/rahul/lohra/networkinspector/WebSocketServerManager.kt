@@ -19,21 +19,21 @@ import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.Frame
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.encodeToString
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import kotlin.time.Duration.Companion.seconds
 import java.util.Collections
-import kotlin.Result
 
 object WebSocketServerManager {
     private val clients = Collections.synchronizedSet(mutableSetOf<DefaultWebSocketServerSession>())
 
     private val wsMutex = Mutex()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     fun register(session: DefaultWebSocketServerSession) {
         clients.add(session)
@@ -43,8 +43,8 @@ object WebSocketServerManager {
         clients.remove(session)
     }
 
-    suspend fun broadcast(log: NetworkLogData) {
-        val json = kotlinx.serialization.json.Json.encodeToString(NetworkLogData.serializer(), log)
+    suspend fun broadcast(log: RestApiData) {
+        val json = kotlinx.serialization.json.Json.encodeToString(RestApiData.serializer(), log)
         clients.forEach {
             try {
                 it.send(Frame.Text(json))
@@ -54,9 +54,9 @@ object WebSocketServerManager {
         }
     }
 
-    fun send(log: InspectorLog.Network) {
+    fun send(log: WebsocketData) {
         // Launching in global scope — you can improve this by passing a coroutine scope
-        GlobalScope.launch {
+        coroutineScope.launch {
             val json = kotlinx.serialization.json.Json.encodeToString(log)
             wsMutex.withLock {
                 clients.forEach { session ->
@@ -71,7 +71,7 @@ object WebSocketServerManager {
     }
 
     fun startServer(context: Context, port: Int = 9394) {
-        GlobalScope.launch {
+        coroutineScope.launch {
             embeddedServer(Netty, port) {
                 install(WebSockets) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

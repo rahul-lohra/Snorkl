@@ -2,8 +2,6 @@ package rahul.lohra.networkmonitor
 
 import android.app.Application
 import android.util.Log
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -11,9 +9,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import okio.ByteString
 import rahul.lohra.networkinspector.InspectingWebSocketListener
-import rahul.lohra.networkinspector.InspectorLog
 import rahul.lohra.networkinspector.NetworkLoggerInterceptor
 import rahul.lohra.networkinspector.Util
 import rahul.lohra.networkinspector.WebSocketServerManager
@@ -90,21 +86,5 @@ object WebsocketClient {
     fun close() {
         webSocket?.close(1000, "Closing from user")
         webSocket = null
-    }
-
-    private fun sendLog(direction: String, body: String = "") {
-
-        Log.d("InspectingWebSocketListener", "sendLog: direction:$direction, body:$body")
-
-        val log = InspectorLog.Network(
-            requestUrl = requestUrl,
-            direction = direction,
-            body = body,
-            timestamp = System.currentTimeMillis()
-        )
-
-        GlobalScope.launch {
-            WebSocketServerManager.send(log)
-        }
     }
 }

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import java.util.UUID
 
 @Serializable
-data class NetworkLogData(
+data class RestApiData(
     val id: String = UUID.randomUUID().toString(),
     val timestamp: Long = System.currentTimeMillis(),
     val requestUrl: String,
@@ -17,15 +17,13 @@ data class NetworkLogData(
     val networkType: String = "rest"
 )
 
-sealed class InspectorLog {
-    @Serializable
-    data class Network(
-        val requestUrl: String,
-        val method: String? = null,
-        val direction: String, // e.g., "Request", "Response", "WebSocket OPEN", etc.
-        val body: String? = null,
-        val timestamp: Long = System.currentTimeMillis(),
-        val responseCode: Int = 0,
-        val networkType: String = "ws"
-    ) : InspectorLog()
-}
+@Serializable
+data class WebsocketData(
+    val requestUrl: String,
+    val direction: String, // e.g., "Request", "Response", "WebSocket OPEN", etc.
+    val body: String? = null,
+    val timestamp: Long = System.currentTimeMillis(),
+    val responseCode: Int = 0,
+    val networkType: String = "ws"
+)
+

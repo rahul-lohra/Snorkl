@@ -1,56 +1,333 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>WebSocket Inspector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal WebSocket Logs</title>
     <style>
-        body { font-family: Arial; padding: 20px; }
-        #logs { border: 1px solid #ddd; padding: 10px; margin-top: 10px; }
-        .log { margin: 5px 0; padding: 5px; background: #f5f5f5; }
-        #status { padding: 5px; color: white; background: red; display: inline-block; }
+        /* Light Theme */
+        body {
+            font-family: monospace;
+            margin: 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            color: #222;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #controls {
+            margin-bottom: 10px;
+        }
+
+        #status-label {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin-right: 5px;
+            cursor: pointer;
+            background-color: #eee;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ddd;
+        }
+
+        #logs-container {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            white-space: pre-wrap; /* Preserve formatting */
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-y: auto; /* Enable scrolling for long logs */
+            max-height: 400px; /* Optional: Limit height */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: 1px dotted #eee;
+            transition: border-color 0.3s ease;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        /* WebSocket Log Entry Styling (Slightly Modified) */
+        .log-entry.websocket .log-header {
+            background-color: #e0f7fa; /* Light blue for WebSocket headers */
+            color: #0d47a1; /* Darker blue text */
+            height: 40px;
+        }
+        .log-entry.websocket .log-body {
+            background-color: #f5f5f5; /* Light gray for WebSocket bodies */
+            color: #222;
+        }
+
+        /* REST API Log Entry Styling */
+        .log-entry.rest .log-header {
+            background-color: #f0f4c3; /* Light yellow for REST headers */
+            color: #795548; /* Brown text */
+            height: 40px;
+        }
+        .log-entry.rest .log-body {
+            background-color: #f5f5f5;  /* Light gray for REST bodies */
+            color: #222;
+        }
+
+        /* Dark Theme */
+        body.dark-theme {
+            background-color: #1e1e1e;
+            color: #eee;
+        }
+
+        body.dark-theme #logs-container {
+            background-color: #252525;
+            border-color: #555;
+        }
+
+        body.dark-theme button {
+            background-color: #333;
+            color: #eee;
+            border-color: #555;
+        }
+
+        body.dark-theme button:hover {
+            background-color: #444;
+        }
+
+        body.dark-theme .log-entry {
+            border-bottom-color: #444;
+        }
+    
+        /* Dark Theme - WebSocket Log Entry Styling */
+        body.dark-theme .log-entry.websocket .log-header {
+            background-color: #0d47a1;  /* Darker blue for WebSocket headers */
+            color: #e0f7fa;
+        }
+        body.dark-theme .log-entry.websocket .log-body {
+            background-color: #2a3744;
+            color: #eee;
+        }
+
+        /* Dark Theme - REST API Log Entry Styling */
+        body.dark-theme .log-entry.rest .log-header {
+            background-color: #795548; /* Brown for REST headers */
+            color: #f0f4c3;
+        }
+        body.dark-theme .log-entry.rest .log-body {
+            background-color: #2a3744;
+            color: #eee;
+        }
     </style>
 </head>
 <body>
-    <h2>Android WebSocket Inspector</h2>
-    <button id="connectBtn">Connect</button>
-    <span id="status">Disconnected</span>
-    <div id="logs"></div>
 
-    <script>
-        // 1. Simple connection manager
-        const wsManager = {
-            ws: null,
-            connect() {
-                const ip = prompt("Enter Android device IP:", "192.168.1.12");
-                this.ws = new WebSocket(`ws://${ip}:9394/logs`);
-                
-                this.ws.onopen = () => {
-                    document.getElementById('status').textContent = "Connected";
-                    document.getElementById('status').style.background = "green";
-                    this.addLog("✅ Connected to Android device");
-                };
-                
-                this.ws.onmessage = (event) => {
-                    this.addLog(event.data);
-                };
-                
-                this.ws.onerror = (error) => {
-                    this.addLog(`❌ Error: ${error.message}`);
-                };
-            },
-            
-            addLog(message) {
-                const logElement = document.createElement('div');
-                logElement.className = 'log';
-                logElement.textContent = message;
-                document.getElementById('logs').appendChild(logElement);
-            }
+<div id="controls">
+    <span id="status-label">Disconnected</span>
+    <button id="connectBtn">Connect</button>
+    <button id="clearBtn">Clear Logs</button>
+    <button id="themeToggle">Dark Theme</button>
+</div>
+
+<div id="logs-container"></div>
+
+<script>
+    const body = document.body;
+    const logsContainer = document.getElementById('logs-container');
+    const statusLabel = document.getElementById('status-label');
+    const connectBtn = document.getElementById('connectBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const themeToggleBtn = document.getElementById('themeToggle');
+    let websocket;
+
+    function detectDeviceIp() {
+        return window.location.host;
+    }
+
+    function getWebSocketUrl() {
+        const host = detectDeviceIp();
+        return `ws://${host}/logs`;
+    }
+
+    function connectWebSocket() {
+        const wsUrl = getWebSocketUrl();
+        websocket = new WebSocket(wsUrl);
+        statusLabel.textContent = 'Connecting...';
+        connectBtn.textContent = 'Disconnect';
+
+        websocket.onopen = () => {
+            console.log('WebSocket Connected');
+            statusLabel.textContent = 'Connected';
+            connectBtn.textContent = 'Disconnect';
         };
 
-        // 2. Just connect when button is clicked
-        document.getElementById('connectBtn').addEventListener('click', () => {
-            wsManager.connect();
-        });
-    </script>
+        websocket.onclose = () => {
+            console.log('WebSocket Disconnected');
+            statusLabel.textContent = 'Disconnected';
+            connectBtn.textContent = 'Connect';
+            websocket = null;
+        };
+
+        websocket.onerror = (error) => {
+            console.error('WebSocket Error:', error);
+            statusLabel.textContent = 'Error: ' + error.message;
+            connectBtn.textContent = 'Connect';
+            websocket = null;
+        };
+
+        websocket.onmessage = (event) => {
+            const logMessage = event.data;
+            try {
+                const log = JSON.parse(logMessage);                
+                const method = log.method 
+                displayLog(logMessage);
+
+                
+            } catch (error) {                
+                displayLog(`Error parsing log message: ${error}`, 'error');
+            }
+        };
+    }
+
+    function disconnectWebSocket() {
+        if (websocket) {
+            websocket.close();
+        }
+    }
+
+    function toggleConnection() {
+        if (websocket) {
+            disconnectWebSocket();
+        } else {
+            connectWebSocket();
+        }
+    }
+
+    function displayLog(message) {    
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry';
+        logEntry.textContent = message;
+        logsContainer.appendChild(logEntry);
+        logsContainer.scrollTop = logsContainer.scrollHeight; // Auto-scroll to bottom
+    }
+
+    // New function to render REST API logs
+    function renderRestLog(log) {
+        const date = new Date(log.timestamp || Date.now());
+        const timeString = date.toLocaleTimeString();
+        const dateString = date.toLocaleDateString();
+
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry rest';  // Explicitly set the class
+        logEntry.innerHTML = `
+            <div class="log-header">
+                <div>
+                    <strong>${log.method || 'GET'}</strong> <strong>${log.requestUrl}</strong> ${log.responseCode ? `Response Code: <strong>${log.responseCode}</strong>` : ''}
+                </div>
+                <div class="timestamp">${dateString} ${timeString}</div>
+            </div>
+            <div class="log-body">${formatBody(log.body)}</div>
+        `;
+        logsContainer.appendChild(logEntry);
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+        setTimeout(() => checkBodySize(logEntry), 0);
+    }
+
+    // New function to render WebSocket logs
+    function renderWebSocketLog(log) {
+        const date = new Date(log.timestamp || Date.now());
+        const timeString = date.toLocaleTimeString();
+        const dateString = date.toLocaleDateString();
+
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry websocket'; //  Explicitly set the class
+        logEntry.innerHTML = `
+            <div class="log-header">
+                <div>
+                    <strong>WebSocket</strong> ${log.direction ? `• ${log.direction}` : ''}
+                </div>
+                <div class="timestamp">${dateString} ${timeString}</div>
+            </div>
+            <div class="log-body">${formatBody(log.body)}</div>
+        `;
+        logsContainer.appendChild(logEntry);
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+        setTimeout(() => checkBodySize(logEntry), 0);
+    }
+
+    function clearLogs() {
+        logsContainer.innerHTML = '';
+    }
+
+    function toggleTheme() {
+        body.classList.toggle('dark-theme');
+        if (body.classList.contains('dark-theme')) {
+            themeToggleBtn.textContent = 'Light Theme';
+        } else {
+            themeToggleBtn.textContent = 'Dark Theme';
+        }
+        // Optional: Store theme preference in localStorage
+    }
+
+    function formatBody(bodyContent) {
+        try {
+            const parsed = JSON.parse(bodyContent);
+            return JSON.stringify(parsed, null, 2);
+        } catch (error) {
+            return bodyContent;
+        }
+    }
+
+    function checkBodySize(entryElement) {
+        const container = entryElement.querySelector('.log-body-container');
+        if (!container) return;
+
+        const bodyElement = entryElement.querySelector('.log-body');
+        const lineHeight = parseFloat(getComputedStyle(bodyElement).lineHeight);
+        const maxHeight = lineHeight * 3;
+
+        if (bodyElement.scrollHeight > maxHeight) {
+            container.innerHTML = `
+                <div class="log-body collapsed" style="max-height: ${maxHeight}px; overflow: hidden; mask-image: linear-gradient(to bottom, black 70%, transparent 100%);">
+                    ${bodyElement.innerHTML}
+                </div>
+                <button class="toggle-body">Show more ▼</button>
+            `;
+
+            container.querySelector('.toggle-body').addEventListener('click', function () {
+                const bodyDiv = this.previousElementSibling; // Corrected variable name to bodyDiv
+                if (bodyDiv.classList.contains('collapsed')) {
+                    bodyDiv.classList.remove('collapsed');
+                    bodyDiv.style.maxHeight = 'none';
+                    this.textContent = 'Show less ▲';
+                } else {
+                    bodyDiv.classList.add('collapsed');
+                    bodyDiv.style.maxHeight = `${maxHeight}px`;
+                    this.textContent = 'Show more ▼';
+                }
+            });
+        }
+    }
+
+    // Event listeners
+    connectBtn.addEventListener('click', toggleConnection);
+    clearBtn.addEventListener('click', clearLogs);
+    themeToggleBtn.addEventListener('click', toggleTheme);
+
+    // Attempt to connect on page load
+    connectWebSocket();
+</script>
+
 </body>
 </html>

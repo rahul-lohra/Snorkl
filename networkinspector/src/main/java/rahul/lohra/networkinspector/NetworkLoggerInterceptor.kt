@@ -1,14 +1,19 @@
 package rahul.lohra.networkinspector
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class NetworkLoggerInterceptor : Interceptor {
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun intercept(chain: Interceptor.Chain): Response {
+
         val request = chain.request()
         val startNs = System.nanoTime()
 
@@ -17,17 +22,18 @@ class NetworkLoggerInterceptor : Interceptor {
 
         val body = response.peekBody(1024 * 1024).string()
 
-        val logData = NetworkLogData(
+        val logData = RestApiData(
             requestUrl = request.url.toString(),
             method = request.method,
             requestHeaders = request.headers.toMultimap(),
             responseCode = response.code,
             responseHeaders = response.headers.toMultimap(),
             body = body,
-            durationMs = durationMs
+            durationMs = durationMs,
+            networkType = "rest"
         )
 
-        GlobalScope.launch {
+        scope.launch {
             WebSocketServerManager.broadcast(logData)
         }
         return response

@@ -1,7 +1,8 @@
 package rahul.lohra.networkinspector
 
 import android.util.Log
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -13,7 +14,10 @@ class InspectingWebSocketListener(
     private val requestUrl: String
 ) : WebSocketListener() {
 
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     override fun onOpen(webSocket: WebSocket, response: Response) {
+
         sendLog("WebSocket OPEN", response.body?.string().orEmpty())
         original.onOpen(webSocket, response)
     }
@@ -54,14 +58,15 @@ class InspectingWebSocketListener(
 
         Log.d("InspectingWebSocketListener", "sendLog: direction:$direction, body:$body")
 
-        val log = InspectorLog.Network(
+        val log = WebsocketData(
             requestUrl = requestUrl,
             direction = direction,
             body = body,
-            timestamp = System.currentTimeMillis()
+            timestamp = System.currentTimeMillis(),
+            networkType = "ws"
         )
 
-        GlobalScope.launch {
+        scope.launch {
             WebSocketServerManager.send(log)
         }
     }
