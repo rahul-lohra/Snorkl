@@ -190,7 +190,7 @@
             try {
                 const log = JSON.parse(logMessage);                
                 const method = log.method 
-                displayLog(logMessage);
+                displayLog(log);
 
                 
             } catch (error) {                
@@ -216,7 +216,9 @@
     function displayLog(message) {    
         const logEntry = document.createElement('div');
         logEntry.className = 'log-entry';
-        logEntry.textContent = message;
+        const formattedBody = formatBody(message.body)
+        message.body = formattedBody
+        logEntry.textContent = JSON.stringify(message, null, 2);
         logsContainer.appendChild(logEntry);
         logsContainer.scrollTop = logsContainer.scrollHeight; // Auto-scroll to bottom
     }
@@ -282,7 +284,7 @@
     function formatBody(bodyContent) {
         try {
             const parsed = JSON.parse(bodyContent);
-            return JSON.stringify(parsed, null, 2);
+            return parsed;
         } catch (error) {
             return bodyContent;
         }

@@ -14,6 +14,7 @@ data class RestApiData(
     val responseHeaders: Map<String, List<String>>,
     val body: String,
     val durationMs: Long,
+    val requestBody: String,
     val networkType: String = "rest"
 )
 

@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.Response
+import okio.Buffer
 
 class NetworkLoggerInterceptor : Interceptor {
 
@@ -22,6 +23,20 @@ class NetworkLoggerInterceptor : Interceptor {
 
         val body = response.peekBody(1024 * 1024).string()
 
+        // Log Request Body
+        val requestBodyString = try {
+            val requestBody = request.body
+            if (requestBody != null) {
+                val buffer = Buffer()
+                requestBody.writeTo(buffer)
+                buffer.readUtf8()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            "Error reading request body: ${e.message}"
+        }
+
         val logData = RestApiData(
             requestUrl = request.url.toString(),
             method = request.method,
@@ -30,6 +45,7 @@ class NetworkLoggerInterceptor : Interceptor {
             responseHeaders = response.headers.toMultimap(),
             body = body,
             durationMs = durationMs,
+            requestBody = requestBodyString ?: "",
             networkType = "rest"
         )
 
