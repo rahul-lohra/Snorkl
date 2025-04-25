@@ -218,6 +218,9 @@
         logEntry.className = 'log-entry';
         const formattedBody = formatBody(message.body)
         message.body = formattedBody
+
+        const formattedRequestBody = formatBody(message.requestBody)
+        message.requestBody = formattedBody
         logEntry.textContent = JSON.stringify(message, null, 2);
         logsContainer.appendChild(logEntry);
         logsContainer.scrollTop = logsContainer.scrollHeight; // Auto-scroll to bottom
