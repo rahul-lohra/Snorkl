@@ -44,7 +44,6 @@
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 10px;
-            white-space: pre-wrap; /* Preserve formatting */
             font-size: 14px;
             line-height: 1.4;
             overflow-y: auto; /* Enable scrolling for long logs */
@@ -77,7 +76,6 @@
         .log-entry.rest .log-header {
             background-color: #f0f4c3; /* Light yellow for REST headers */
             color: #795548; /* Brown text */
-            height: 40px;
         }
         .log-entry.rest .log-body {
             background-color: #f5f5f5;  /* Light gray for REST bodies */
@@ -189,10 +187,16 @@
             const logMessage = event.data;
             try {
                 const log = JSON.parse(logMessage);                
-                const method = log.method 
-                displayLog(log);
+                const method = log.method
+                const direction = log.direction
+                if (method != null) {
+                    renderRestLog(log)                    
+                } else if (direction != null) {
+                    renderWebSocketLog(log)
+                } else {
+                    displayLog(log);
+                }
 
-                
             } catch (error) {                
                 displayLog(`Error parsing log message: ${error}`, 'error');
             }
@@ -232,42 +236,164 @@
         const timeString = date.toLocaleTimeString();
         const dateString = date.toLocaleDateString();
 
+        const formattedBody = formatBody(log.body);
+        const formattedRequestBody = formatBody(log.requestBody);
+
         const logEntry = document.createElement('div');
-        logEntry.className = 'log-entry rest';  // Explicitly set the class
+        logEntry.className = 'log-entry rest';
         logEntry.innerHTML = `
-            <div class="log-header">
-                <div>
-                    <strong>${log.method || 'GET'}</strong> <strong>${log.requestUrl}</strong> ${log.responseCode ? `Response Code: <strong>${log.responseCode}</strong>` : ''}
+            <div class="collapsed-header" onclick="this.parentNode.querySelector('.expanded-content').style.display = this.parentNode.querySelector('.expanded-content').style.display === 'none' ? 'block' : 'none'; this.querySelector('.expand-toggle').textContent = this.parentNode.querySelector('.expanded-content').style.display === 'none' ? '▶' : '▼';">
+                <div class="collapsed-info">
+                    <strong>Status:</strong> <span class="status">${log.responseCode || 'N/A'}</span>
+                    | <strong>Method:</strong> ${log.method || 'N/A'}
+                    <br>
+                    <strong>URL:</strong> ${log.requestUrl || 'N/A'}
                 </div>
-                <div class="timestamp">${dateString} ${timeString}</div>
+                <span class="expand-toggle">▶</span>
             </div>
-            <div class="log-body">${formatBody(log.body)}</div>
+            <div class="expanded-content" style="display: none;">
+                ${log.requestBody ? `
+                <div class="body-section">
+                    <div class="body-title">Request Body:</div>
+                    <div class="body-content">${formattedRequestBody}</div>
+                </div>
+                ` : ''}
+                ${log.body ? `
+                <div class="body-section">
+                    <div class="body-title">Response Body:</div>
+                    <div class="body-content">${formattedBody}</div>
+                </div>
+                ` : ''}
+            </div>
+            <div class="copy-actions">
+                <button class="copy-btn" data-log-type="rest">Copy Log</button>
+            </div>
         `;
         logsContainer.appendChild(logEntry);
         logsContainer.scrollTop = logsContainer.scrollHeight;
-        setTimeout(() => checkBodySize(logEntry), 0);
+
+        const copyButton = logEntry.querySelector('.copy-btn');
+        if (copyButton) {
+            copyButton.addEventListener('click', (event) => {
+                const logText = formatRestLogForCopy(log, dateString, timeString, formattedRequestBody, formattedBody);
+                copyToClipboard(event, logText);
+            });
+        }
     }
 
-    // New function to render WebSocket logs
+    function formatRestLogForCopy(log, dateString, timeString, formattedRequestBody, formattedBody) {
+        let logText = `REST Log:\n`;
+        logText += `Timestamp: ${dateString} ${timeString}\n`;
+        logText += `URL: ${log.requestUrl || 'N/A'}\n`;
+        logText += `Method: ${log.method || 'N/A'}\n`;
+        logText += `Status Code: ${log.responseCode || 'N/A'}\n`;
+        if (formattedRequestBody) {
+            logText += `\nRequest Body:\n${formattedRequestBody}\n`;
+        }
+        if (formattedBody) {
+            logText += `\nResponse Body:\n${formattedBody}\n`;
+        }
+        return logText;
+    }
+
+    // New function to render WebSocket logs with collapsible UI
     function renderWebSocketLog(log) {
         const date = new Date(log.timestamp || Date.now());
         const timeString = date.toLocaleTimeString();
         const dateString = date.toLocaleDateString();
+        const formattedBody = formatBody(log.body);
 
         const logEntry = document.createElement('div');
         logEntry.className = 'log-entry websocket'; //  Explicitly set the class
         logEntry.innerHTML = `
-            <div class="log-header">
-                <div>
+            <div class="collapsed-header" onclick="this.parentNode.querySelector('.expanded-content').style.display = this.parentNode.querySelector('.expanded-content').style.display === 'none' ? 'block' : 'none'; this.querySelector('.expand-toggle').textContent = this.parentNode.querySelector('.expanded-content').style.display === 'none' ? '▶' : '▼';">
+                <div class="collapsed-info">
                     <strong>WebSocket</strong> ${log.direction ? `• ${log.direction}` : ''}
                 </div>
                 <div class="timestamp">${dateString} ${timeString}</div>
+                <span class="expand-toggle">▶</span>
             </div>
-            <div class="log-body">${formatBody(log.body)}</div>
+            <div class="expanded-content" style="display: none;">
+                ${log.body ? `
+                <div class="body-section">
+                    <div class="body-title">Response Body:</div>
+                    <div class="body-content">${formattedBody}</div>
+                </div>
+                ` : ''}
+            </div>
+            <div class="copy-actions">
+                <button class="copy-btn" data-log-type="websocket">Copy Log</button>
+            </div>
         `;
         logsContainer.appendChild(logEntry);
         logsContainer.scrollTop = logsContainer.scrollHeight;
-        setTimeout(() => checkBodySize(logEntry), 0);
+
+        const copyButton = logEntry.querySelector('.copy-btn');
+        if (copyButton) {
+            copyButton.addEventListener('click', (event) => {
+                const logText = formatWebSocketLogForCopy(log, dateString, timeString, formattedBody, getWebSocketUrl());
+                copyToClipboard(event, logText);
+            });
+        }
+    }
+    
+    function formatWebSocketLogForCopy(log, dateString, timeString, formattedBody, url) {
+        let logText = `WebSocket Log:\n`;
+        logText += `Timestamp: ${dateString} ${timeString}\n`;
+        logText += `URL: ${url}\n`;
+        if (log.direction) {
+            logText += `Direction: ${log.direction}\n`;
+        }
+        if (formattedBody) {
+            logText += `\nEvent/Response Body:\n${formattedBody}\n`;
+        }
+        return logText;
+    }
+
+    function copyToClipboard(event, textToCopy) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    console.log(`Copied log: ${textToCopy.substring(0, 50)}...`);
+                    // Optionally provide visual feedback
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    // Fallback if writeText fails (e.g., permissions)
+                    fallbackCopyToClipboard(textToCopy);
+                });
+        } else {
+            // Fallback for browsers that don't support navigator.clipboard
+            fallbackCopyToClipboard(textToCopy);
+        }
+    }
+
+    function fallbackCopyToClipboard(text) {
+        const tempInput = document.createElement("textarea");
+        tempInput.value = text;
+        // Prevent showing the textarea visually
+        tempInput.style.position = "absolute";
+        tempInput.style.left = "-9999px";
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            const successful = document.execCommand('copy');
+            const msg = successful ? 'successful' : 'unsuccessful';
+            console.log(`Fallback: Copying text command was ${msg}`);
+            // Optionally provide visual feedback
+        } catch (err) {
+            console.error('Fallback: Unable to copy text: ', err);
+        }
+        document.body.removeChild(tempInput);
+    }
+
+    function formatBody(bodyContent) {
+        try {
+            const parsed = JSON.parse(bodyContent);
+            return JSON.stringify(parsed, null, 2);
+        } catch (error) {
+            return bodyContent;
+        }
     }
 
     function clearLogs() {
@@ -282,15 +408,6 @@
             themeToggleBtn.textContent = 'Dark Theme';
         }
         // Optional: Store theme preference in localStorage
-    }
-
-    function formatBody(bodyContent) {
-        try {
-            const parsed = JSON.parse(bodyContent);
-            return parsed;
-        } catch (error) {
-            return bodyContent;
-        }
     }
 
     function checkBodySize(entryElement) {
@@ -323,6 +440,16 @@
             });
         }
     }
+
+    function copyLogData(data) {
+        const text = JSON.stringify(data, null, 2);
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Log copied to clipboard!");
+        }).catch(err => {
+            console.error("Failed to copy log: ", err);
+        });
+    }
+
 
     // Event listeners
     connectBtn.addEventListener('click', toggleConnection);
