@@ -63,7 +63,7 @@ dependencies {
 }
 
 afterEvaluate {
-    val artifactVersion = "0.0.12-kotlin1.9"
+    val artifactVersion = "0.0.13-kotlin1.9"
 
     publishing {
         publications {
