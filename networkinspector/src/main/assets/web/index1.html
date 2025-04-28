@@ -126,16 +126,40 @@
             background-color: #2a3744;
             color: #eee;
         }
+
+        #device-name-label {
+        font-size: 14px;
+        margin-right: 5px;
+        }
+
+        #deviceNameInput {
+            padding: 6px 10px;
+            margin-right: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        body.dark-theme #deviceNameInput {
+            background-color: #333;
+            color: #eee;
+            border-color: #555;
+        }
+
     </style>
 </head>
 <body>
 
 <div id="controls">
+    <label for="deviceNameInput" id="device-name-label">Device Name:</label>
+    <input type="text" id="deviceNameInput" placeholder="Enter device name..." />
+
     <span id="status-label">Disconnected</span>
     <button id="connectBtn">Connect</button>
     <button id="clearBtn">Clear Logs</button>
     <button id="themeToggle">Dark Theme</button>
 </div>
+
 
 <div id="logs-container"></div>
 
