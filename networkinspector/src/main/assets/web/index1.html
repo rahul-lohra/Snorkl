@@ -210,15 +210,20 @@
         websocket.onmessage = (event) => {
             const logMessage = event.data;
             try {
-                const log = JSON.parse(logMessage);                
-                const method = log.method
-                const direction = log.direction
-                if (method != null) {
-                    renderRestLog(log)                    
-                } else if (direction != null) {
-                    renderWebSocketLog(log)
+                if (logMessage == "SERVER: Connection established") {
+                    displayLog(logMessage);
                 } else {
-                    displayLog(log);
+                    const log = JSON.parse(logMessage);
+                    const method = log.method
+                    const direction = log.direction
+                    if (method != null) {
+                        renderRestLog(log)
+                    } else if (direction != null) {
+                        renderWebSocketLog(log)
+                    } else {
+                        displayLog(log);
+                    }
+
                 }
 
             } catch (error) {                
