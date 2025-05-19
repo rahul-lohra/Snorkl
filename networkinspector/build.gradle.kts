@@ -49,6 +49,13 @@ android {
             "org.jetbrains.kotlin:kotlin-stdlib:1.9.25"      // If you are using the platform stdlib
         )
     }
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
+    }
 }
 
 dependencies {
@@ -60,7 +67,26 @@ dependencies {
     implementation(libs.ktor.server.websockets)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.material3)
+
+    var paging_version = "3.1.1"
+    implementation ("androidx.paging:paging-runtime:$paging_version")
+    implementation("androidx.paging:paging-compose:3.3.6")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+    implementation("androidx.navigation:navigation-compose:2.8.6")
+
 }
+
 
 afterEvaluate {
     val artifactVersion = "0.0.15-kotlin1.9"

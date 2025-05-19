@@ -16,7 +16,7 @@ data class RestApiData(
     val durationMs: Long,
     val requestBody: String,
     val networkType: String = "rest"
-)
+): NetworkData()
 
 @Serializable
 data class WebsocketData(
@@ -26,5 +26,6 @@ data class WebsocketData(
     val timestamp: Long = System.currentTimeMillis(),
     val responseCode: Int = 0,
     val networkType: String = "ws"
-)
+): NetworkData()
 
+sealed class NetworkData
