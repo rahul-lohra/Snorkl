@@ -1,5 +1,6 @@
 package rahul.lohra.networkmonitor
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import rahul.lohra.networkinspector.Util
+import rahul.lohra.networkinspector.presentation.ui.NetworkMonitorActivity
 import rahul.lohra.networkmonitor.ui.theme.AndroidNetworkMonitorTheme
 
 
@@ -28,7 +30,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        if(true){
+            startActivity(Intent(this, NetworkMonitorActivity::class.java))
+            return
+        }
         setContent {
             AndroidNetworkMonitorTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     kotlin("plugin.serialization") version "1.9.10"
     alias(libs.plugins.maven.publish)
+    alias(libs.plugins.com.google.devtools.ksp)
 }
 // Add this at the top of the file
 val localProperties = Properties().apply {
@@ -85,6 +86,11 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
     implementation("androidx.navigation:navigation-compose:2.8.6")
 
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-paging:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 }
 
 

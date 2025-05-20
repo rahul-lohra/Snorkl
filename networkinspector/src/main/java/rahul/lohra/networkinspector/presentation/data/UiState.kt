@@ -1,4 +1,4 @@
-package rahul.lohra.networkinspector.ui
+package rahul.lohra.networkinspector.presentation.data
 
 sealed class UiState<T>
 class UiInitial<T> : UiState<T>()
