@@ -10,10 +10,7 @@ import okhttp3.WebSocketListener
 import okio.ByteString
 import rahul.lohra.networkmonitor.data.WebsocketData
 
-class InspectingWebSocketListener(
-    private val original: WebSocketListener,
-    private val requestUrl: String
-) : WebSocketListener() {
+class InspectingWebSocketListener(private val original: WebSocketListener) : WebSocketListener() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -60,7 +57,7 @@ class InspectingWebSocketListener(
         Log.d("InspectingWebSocketListener", "sendLog: direction:$direction, body:$body")
 
         val log = WebsocketData(
-            requestUrl = requestUrl,
+            requestUrl = "requestUrl",
             direction = direction,
             body = body,
             timestamp = System.currentTimeMillis(),

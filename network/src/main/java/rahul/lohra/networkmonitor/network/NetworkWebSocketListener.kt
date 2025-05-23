@@ -12,36 +12,30 @@ import rahul.lohra.networkmonitor.data.WebsocketData
 import rahul.lohra.networkmonitor.data.local.db.DatabaseProvider
 import rahul.lohra.networkmonitor.data.mappers.toEntity
 
-class InspectingWebSocketListener(private val original: WebSocketListener) : WebSocketListener() {
+class NetworkWebSocketListener() : WebSocketListener() {
 
     private val requestUrl: String = ""
     private val database = DatabaseProvider.getDatabase()
     private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-
         sendLog("WebSocket OPEN", response.body?.string().orEmpty())
-        original.onOpen(webSocket, response)
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         sendLog("WebSocket ↓", text)
-        original.onMessage(webSocket, text)
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
         sendLog("WebSocket ↓ (binary)", bytes.hex())
-        original.onMessage(webSocket, bytes)
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         sendLog("WebSocket CLOSING", "code=$code, reason=$reason")
-        original.onClosing(webSocket, code, reason)
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         sendLog("WebSocket CLOSED", "code=$code, reason=$reason")
-        original.onClosed(webSocket, code, reason)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -53,7 +47,6 @@ class InspectingWebSocketListener(private val original: WebSocketListener) : Web
                 append("\n\nResponse: ${it.code} ${it.message}")
             }
         })
-        original.onFailure(webSocket, t, response)
     }
 
     private fun sendLog(direction: String, body: String = "") {
@@ -73,4 +66,3 @@ class InspectingWebSocketListener(private val original: WebSocketListener) : Web
         }
     }
 }
-
