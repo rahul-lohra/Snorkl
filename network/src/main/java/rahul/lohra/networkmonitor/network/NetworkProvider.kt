@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkProvider {
 
-    private const val BASE_URL = "https://hipsum.co/api" //"https://hipsum.co/api/?type=hipster-centric&paras=2"
+    private const val BASE_URL = "https://hipsum.co/api/" //"https://hipsum.co/api/?type=hipster-centric&paras=2"
 
     private lateinit var apiService: ApiService
 

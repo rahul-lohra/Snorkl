@@ -8,7 +8,5 @@ interface ApiService {
     suspend fun getHipsterIpsum(
         @Query("type") type: String = "hipster-centric",
         @Query("paras") paras: Int = 2
-    ): HipsterResponse
+    ): List<String>
 }
-
-data class HipsterResponse(val text: String)
