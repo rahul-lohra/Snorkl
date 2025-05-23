@@ -15,7 +15,7 @@ composeOptions {
 ```
 
 ```kotlin
-//File networkinspector/WebSocketServerManager.kt
+//File networkmonitor/WebSocketServerManager.kt
 import io.ktor.server.application.call
 import kotlinx.serialization.encodeToString
 
@@ -28,7 +28,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 ```
 
 ```kotlin
-// /File networkinspector/build.gradle.kts
+// /File networkmonitor/build.gradle.kts
    configurations.all {
         resolutionStrategy.force(
             "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.25", // Replace with your desired 1.9.x version
@@ -43,7 +43,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 2. In libs.versions.toml set these values kotlin = "2.0.20" and ktorServerCore = "3.1.2"
 3. Code snippets to use
 ```kotlin
-//File networkinspector/WebSocketServerManager.kt
+//File networkmonitor/WebSocketServerManager.kt
 pingPeriod = 15.seconds
 timeout = 30.seconds
 ```

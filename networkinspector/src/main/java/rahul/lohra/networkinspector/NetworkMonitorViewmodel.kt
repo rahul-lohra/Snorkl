@@ -1,2 +1,0 @@
-package rahul.lohra.networkinspector
-

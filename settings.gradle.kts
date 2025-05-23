@@ -21,5 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidNetworkMonitor"
 include(":app")
-include(":networkinspector")
-include(":mylibrary")
+include(":networkmonitor")
+include(":network")
+include(":network-noop")
+include(":data")
+include(":core")

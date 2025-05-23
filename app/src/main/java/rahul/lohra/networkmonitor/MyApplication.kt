@@ -9,10 +9,6 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import rahul.lohra.networkinspector.InspectingWebSocketListener
-import rahul.lohra.networkinspector.NetworkLoggerInterceptor
-import rahul.lohra.networkinspector.Util
-import rahul.lohra.networkinspector.WebSocketServerManager
 import java.io.IOException
 
 class MyApplication : Application() {
