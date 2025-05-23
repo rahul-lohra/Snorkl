@@ -79,17 +79,14 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3)
-
-    var paging_version = "3.1.1"
-    implementation ("androidx.paging:paging-runtime:$paging_version")
-    implementation("androidx.paging:paging-compose:3.3.6")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
-    implementation("androidx.navigation:navigation-compose:2.8.6")
-
-    implementation(project(":data"))
-    debugImplementation(project(":network"))
-    releaseImplementation(project(":network-noop"))
+    implementation (libs.paging.runtime)
+    implementation (libs.paging.compose)
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+    implementation (libs.androidx.navigation.compose)
     implementation(libs.room.runtime)
+    implementation(project(":data"))
+    implementation(project(":network"))
+
 }
 
 
