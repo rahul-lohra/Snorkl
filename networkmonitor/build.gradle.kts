@@ -90,34 +90,34 @@ dependencies {
 }
 
 
-afterEvaluate {
-    val artifactVersion = "0.0.16-kotlin1.9"
-
-    publishing {
-        publications {
-            create<MavenPublication>("kotlin2.0") {
-                from(components["release"])
-                groupId = "rahul.lohra.networkmonitor"
-                artifactId = "networkmonitor"
-                version = artifactVersion
-            }
-            create<MavenPublication>("kotlin1.9") {
-                from(components["release"])
-                groupId = "rahul.lohra.networkmonitor"
-                artifactId = "networkmonitor"
-                version = artifactVersion
-            }
-
-        }
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/rahul-lohra/API-WebSocket-Viewer")
-                credentials {
-                    username = localProperties.getProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
-                    password = localProperties.getProperty("gpr.token") as String? ?: System.getenv("GPR_TOKEN")
-                }
-            }
-        }
-    }
-}
+//afterEvaluate {
+//    val artifactVersion = "0.0.16-kotlin1.9"
+//
+//    publishing {
+//        publications {
+//            create<MavenPublication>("kotlin2.0") {
+//                from(components["release"])
+//                groupId = "rahul.lohra.networkinspector"
+//                artifactId = "networkinspector"
+//                version = artifactVersion
+//            }
+//            create<MavenPublication>("kotlin1.9") {
+//                from(components["release"])
+//                groupId = "rahul.lohra.networkinspector"
+//                artifactId = "networkinspector"
+//                version = artifactVersion
+//            }
+//
+//        }
+//        repositories {
+//            maven {
+//                name = "GitHubPackages"
+//                url = uri("https://maven.pkg.github.com/rahul-lohra/API-WebSocket-Viewer")
+//                credentials {
+//                    username = localProperties.getProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
+//                    password = localProperties.getProperty("gpr.token") as String? ?: System.getenv("GPR_TOKEN")
+//                }
+//            }
+//        }
+//    }
+//}
