@@ -21,4 +21,7 @@ interface NetworkLogDao {
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
     suspend fun getPaged(offset: Int, limit: Int): List<NetworkEntity>
 
+    @Query("SELECT * FROM network_logs ORDER BY timestamp DESC LIMIT 1")
+    fun getLatestNetworkLog(): Flow<NetworkEntity?>
+
 }

@@ -6,7 +6,7 @@ object SdkContextHolder {
 
     private lateinit var appContext: Context
 
-    fun init(context: Context){
+    internal fun init(context: Context){
         appContext = context.applicationContext
     }
 

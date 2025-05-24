@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.com.google.devtools.ksp)
-    kotlin("plugin.serialization") version "1.9.10"
 }
 
 android {
-    namespace = "rahul.lohra.networkmonitor.data"
+    namespace = "rahul.lohra.network.notification"
     compileSdk = 35
 
     defaultConfig {
@@ -35,11 +33,11 @@ android {
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.room.paging)
-    implementation(libs.room.ktx)
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(project(":core"))
+    implementation(project(":data"))
+    implementation(libs.room.runtime)
 }

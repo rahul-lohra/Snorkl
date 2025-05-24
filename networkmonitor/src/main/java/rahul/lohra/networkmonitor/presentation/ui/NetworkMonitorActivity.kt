@@ -35,6 +35,7 @@ import rahul.lohra.networkmonitor.presentation.viewmodel.NetworkMonitorViewmodel
 import rahul.lohra.networkmonitor.presentation.viewmodel.NetworkMonitorViewmodelFactory
 
 class NetworkMonitorActivity: ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val db = DatabaseProvider.getDatabase(applicationContext)

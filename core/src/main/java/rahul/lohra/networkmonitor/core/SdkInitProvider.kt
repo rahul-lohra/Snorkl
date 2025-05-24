@@ -10,6 +10,7 @@ class SdkInitProvider : ContentProvider() {
     override fun onCreate(): Boolean {
         context?.let {
             SdkContextHolder.init(it)
+            SdkInitializerRegistry.runAll(it)
         }
         return true
     }

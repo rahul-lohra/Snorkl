@@ -12,6 +12,7 @@ object DatabaseProvider {
         if (!::networkDatabase.isInitialized) {
             networkDatabase =
                 Room.databaseBuilder(context, NetworkDatabase::class.java, "network_log_db")
+                    .fallbackToDestructiveMigration()
                     .build()
         }
         return networkDatabase

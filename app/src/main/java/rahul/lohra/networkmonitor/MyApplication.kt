@@ -72,7 +72,7 @@ object WebsocketClient {
             }
         }
 
-        client.newWebSocket(request, InspectingWebSocketListener(listener, requestUrl))
+        client.newWebSocket(request, InspectingWebSocketListener(listener))
     }
 
     fun sendMessage(message: String) {

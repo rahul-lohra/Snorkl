@@ -19,3 +19,8 @@ data class NetworkEntity(
     val direction: String?,        // Only for WS
     val networkType: String        // "rest" or "ws"
 )
+
+enum class NetworkType(val title: String) {
+    REST("rest"),
+    WEBSOCKET("ws")
+}
