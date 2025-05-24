@@ -1,16 +1,18 @@
-package rahul.lohra.networkmonitor.core
+package rahul.lohra.networkmonitor.initializer
 
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
+import rahul.lohra.networkmonitor.core.SdkContextHolder
+import rahul.lohra.networkmonitor.notification.NetworkLogNotifier
 
 class SdkInitProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
         context?.let {
             SdkContextHolder.init(it)
-            SdkInitializerRegistry.runAll(it)
+            NetworkLogNotifier.setup(it)
         }
         return true
     }

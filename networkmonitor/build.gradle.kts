@@ -86,6 +86,9 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(project(":data"))
     implementation(project(":network"))
+    implementation(project(":initializer"))
+    implementation(project(":core"))
+    debugImplementation(libs.ui.tooling)
 
 }
 

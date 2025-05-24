@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "rahul.lohra.networkmonitor.network"
+    namespace = "rahul.lohra.networkmonitor.initializer"
     compileSdk = 35
 
     defaultConfig {
@@ -37,4 +37,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(project(":core"))
+    implementation(project(":notification"))
 }

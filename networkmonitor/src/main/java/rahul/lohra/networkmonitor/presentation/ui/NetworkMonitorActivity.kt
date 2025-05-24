@@ -44,19 +44,26 @@ class NetworkMonitorActivity: ComponentActivity() {
         val useCase = GetPagedNetworkLogsUseCase(networkRepository)
 
         setContent {
-            MyMonitorTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-                    NetworkMonitorToolbar(Modifier.fillMaxWidth(), {
+            val viewModel: NetworkMonitorViewmodel = viewModel(
+                key = NetworkMonitorViewmodel.KEY,
+                factory = NetworkMonitorViewmodelFactory(useCase)
+            )
+            CompositionLocalProvider(LocalNetworkMonitorViewModel provides viewModel) {
+                MyMonitorTheme {
+                    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+                        NetworkMonitorToolbar(Modifier.fillMaxWidth(), {
+                            viewModel.makeGetRequest()
+                        },{
 
-                    },{
+                        },{
 
-                    },{
-
-                    })
-                }) { innerPadding ->
-                    Root(modifier = Modifier.padding(innerPadding), useCase)
-                }
+                        })
+                    }) { innerPadding ->
+                        Root(modifier = Modifier.padding(innerPadding))
+                    }
+                } // No need to pass the VM here
             }
+
         }
     }
 }
@@ -66,15 +73,15 @@ val LocalNetworkMonitorViewModel = staticCompositionLocalOf<NetworkMonitorViewmo
 }
 
 @Composable
-fun Root(modifier: Modifier, useCase: GetPagedNetworkLogsUseCase){
-
-    val viewModel: NetworkMonitorViewmodel = viewModel(
-        key = NetworkMonitorViewmodel.KEY,
-        factory = NetworkMonitorViewmodelFactory(useCase)
-    )
-    CompositionLocalProvider(LocalNetworkMonitorViewModel provides viewModel) {
-        MyAppNavHost(modifier) // No need to pass the VM here
-    }
+fun Root(modifier: Modifier){
+    MyAppNavHost(modifier)
+//    val viewModel: NetworkMonitorViewmodel = viewModel(
+//        key = NetworkMonitorViewmodel.KEY,
+//        factory = NetworkMonitorViewmodelFactory(useCase)
+//    )
+//    CompositionLocalProvider(LocalNetworkMonitorViewModel provides viewModel) {
+//        // No need to pass the VM here
+//    }
 }
 
 @Composable
@@ -87,10 +94,6 @@ fun MyAppNavHost(modifier: Modifier) {
         composable("details") { DetailsScreen(modifier, navController) }
     }
 }
-
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

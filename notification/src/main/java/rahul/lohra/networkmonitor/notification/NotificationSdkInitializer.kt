@@ -2,27 +2,20 @@ package rahul.lohra.networkmonitor.notification
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import rahul.lohra.networkmonitor.core.SdkInitializer
-import rahul.lohra.networkmonitor.core.SdkInitializerRegistry
 import rahul.lohra.networkmonitor.data.local.db.DatabaseProvider
 import rahul.lohra.networkmonitor.data.local.entities.NetworkType
 import java.util.Locale
 
-object NotificationSdkInitializer : SdkInitializer {
-
-    init {
-        SdkInitializerRegistry.register(this)
-    }
+object NotificationSdkInitializer {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val listOfText = FixedSizeQueue<String>(5)
 
-    override fun initialize(context: Context) {
+    fun initialize(context: Context) {
         scope.launch {
             DatabaseProvider.getDatabase()
                 .networkLogDao().getLatestNetworkLog().mapNotNull { it }.collect {

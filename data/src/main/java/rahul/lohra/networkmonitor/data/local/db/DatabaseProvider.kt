@@ -3,7 +3,6 @@ package rahul.lohra.networkmonitor.data.local.db
 import android.content.Context
 import androidx.room.Room
 import rahul.lohra.networkmonitor.core.SdkContextHolder
-import rahul.lohra.networkmonitor.core.SdkInitProvider
 
 object DatabaseProvider {
     private lateinit var networkDatabase: NetworkDatabase

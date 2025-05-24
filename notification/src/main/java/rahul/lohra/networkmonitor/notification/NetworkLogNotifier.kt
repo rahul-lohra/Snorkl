@@ -18,7 +18,12 @@ object NetworkLogNotifier {
     private const val CHANNEL_NAME = "Network Logs"
     private const val CONTENT_TITLE = "Recording Network activity"
 
-    fun initChannel(context: Context) {
+    fun setup(context: Context) {
+        initChannel(context)
+        NotificationSdkInitializer.initialize(context)
+    }
+
+    internal fun initChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
