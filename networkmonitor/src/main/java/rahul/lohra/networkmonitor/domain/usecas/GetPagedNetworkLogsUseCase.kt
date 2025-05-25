@@ -12,7 +12,11 @@ import rahul.lohra.networkmonitor.presentation.mapper.toWebsocketListItem
 class GetPagedNetworkLogsUseCase(
     private val repository: NetworkRepository
 ) {
-    operator fun invoke(): Flow<PagingData<NetworkListItem>> {
+    fun getPagedLogs(): Flow<PagingData<NetworkListItem>> {
         return repository.getPagedNetworkLogs().flow.map { it.map { if (it.networkType == "rest") it.toRestApiListItem() else it.toWebsocketListItem() } }
+    }
+
+    suspend fun clearAll() {
+        repository.clearAll()
     }
 }

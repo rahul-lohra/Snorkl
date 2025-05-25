@@ -1,5 +1,6 @@
 package rahul.lohra.networkmonitor.data.local.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,13 +14,20 @@ interface NetworkLogDao {
     suspend fun insert(entity: NetworkEntity)
 
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC")
-    fun getAll(): Flow<List<NetworkEntity>>
+    fun getAllAsFlow(): Flow<List<NetworkEntity>>
+
+    @Query("SELECT * FROM network_logs ORDER BY timestamp DESC")
+    fun getAll(): List<NetworkEntity>
 
     @Query("DELETE FROM network_logs")
     suspend fun clear()
 
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
-    suspend fun getPaged(offset: Int, limit: Int): List<NetworkEntity>
+    fun getPaged(offset: Int, limit: Int): PagingSource<Int, NetworkEntity>
+
+    @Query("SELECT * FROM network_logs ORDER BY timestamp DESC")
+    fun getPaged(): PagingSource<Int, NetworkEntity>
+
 
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC LIMIT 1")
     fun getLatestNetworkLog(): Flow<NetworkEntity?>

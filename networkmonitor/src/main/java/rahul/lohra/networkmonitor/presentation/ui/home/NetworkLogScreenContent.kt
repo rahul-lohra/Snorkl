@@ -1,6 +1,5 @@
 package rahul.lohra.networkmonitor.presentation.ui.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import rahul.lohra.networkmonitor.NetworkListItem
 import rahul.lohra.networkmonitor.RestApiListItem
 import rahul.lohra.networkmonitor.WebsocketListItem
@@ -24,8 +23,11 @@ fun NetworkLogScreenContent(
     modifier: Modifier,
     networkLogTab: NetworkLogTab,
     navController: NavController,
-    lazyItems: LazyPagingItems<NetworkListItem>
+
 ) {
+    val viewModel = LocalNetworkMonitorViewModel.current
+    val lazyItems = viewModel.allUiNetworkLogs.collectAsLazyPagingItems()
+
     when {
         lazyItems.loadState.refresh is LoadState.Loading -> {
             LoadingView()
