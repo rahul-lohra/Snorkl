@@ -27,23 +27,26 @@ val NetworkMonitorColorPink40 = Color(0xFF7D5260)
 private val NetworkMonitorColorDarkColorScheme = darkColorScheme(
     primary = NetworkMonitorColorPurple80,
     secondary = NetworkMonitorColorPurpleGrey80,
-    tertiary = NetworkMonitorColorPink80
+    tertiary = NetworkMonitorColorPink80,
+    background = Color(0xff202A37),
+
 )
 
 private val NetworkMonitorColorLightColorScheme = lightColorScheme(
     primary = NetworkMonitorColorPurple40,
     secondary = NetworkMonitorColorPurpleGrey40,
-    tertiary = NetworkMonitorColorPink40
+    tertiary = NetworkMonitorColorPink40,
+    background = Color.White,
 )
 
 @Composable
 fun MyMonitorTheme(content: @Composable () -> Unit) {
     val darkTheme = isSystemInDarkTheme()
     val colorScheme = when {
-         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+//         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+//            val context = LocalContext.current
+//            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+//        }
 
         darkTheme -> NetworkMonitorColorDarkColorScheme
         else -> NetworkMonitorColorLightColorScheme

@@ -1,5 +1,6 @@
 package rahul.lohra.networkmonitor.presentation.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -70,6 +72,7 @@ fun NetworkMonitorUi(
     networkLogTab: NetworkLogTab,
     navController: NavController
 ) {
+
     val viewModel = LocalNetworkMonitorViewModel.current
     val state = viewModel.allUiNetworkLogs.collectAsLazyPagingItems()
     NetworkLogScreenContent(

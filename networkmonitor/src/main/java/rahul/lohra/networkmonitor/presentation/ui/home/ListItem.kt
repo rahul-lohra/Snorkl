@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,7 +40,7 @@ fun RestApiListItemUi(
         ListItemColorPalettes.light
     }
 
-    val restApiMethodColor = when (restApiData.method) {
+    val restApiMethodColor = when (restApiData.method.capitalize()) {
         "GET" -> restApiMethodColorsScheme.getText
         "PUT" -> restApiMethodColorsScheme.putText
         "POST" -> restApiMethodColorsScheme.postText
@@ -65,7 +66,7 @@ fun RestApiListItemUi(
                 Text(
                     modifier = Modifier
                         .background(
-                            restApiMethodColor.bgColor,
+                            color = restApiMethodColor.bgColor,
                             shape = RoundedCornerShape(10.dp)
                         )
                         .padding(horizontal = 4.dp),
@@ -433,7 +434,7 @@ internal val ListItemColorPalettes = NetworkMethodTextColorPalettes(
         wsText = NetworkMethodTextColorStyle(Color(0xffc084fc), Color(0xffF9F3FF)),
     ),
     dark = NetworkMethodTextColorScheme(
-        getText = NetworkMethodTextColorStyle(Color.White, Color(0xffEFFCF3)),
+        getText = NetworkMethodTextColorStyle(Color.White, Color(0xff4ADE80)),
         postText = NetworkMethodTextColorStyle(Color(0xff60a5fa), Color(0xff27384E)),
         putText = NetworkMethodTextColorStyle(Color(0xfffacc15), Color(0xff3A3D33)),
         deleteText = NetworkMethodTextColorStyle(Color(0xfff87171), Color(0xff3A323D)),

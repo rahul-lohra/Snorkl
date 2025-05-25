@@ -1,15 +1,13 @@
 package rahul.lohra.networkmonitor.presentation.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -28,8 +26,6 @@ fun NetworkLogScreenContent(
     navController: NavController,
     lazyItems: LazyPagingItems<NetworkListItem>
 ) {
-    val isDark = isSystemInDarkTheme()
-
     when {
         lazyItems.loadState.refresh is LoadState.Loading -> {
             LoadingView()
@@ -50,10 +46,11 @@ fun NetworkLogScreenContent(
                 viewModel.setDetailScreenData(networkData)
                 navController.navigate("details")
             }
+            val colors = MaterialTheme.colorScheme
             LazyColumn {
                 items(lazyItems.itemCount) { index ->
                     lazyItems[index]?.let { item ->
-                        Box(Modifier.background(Color.White)) { //Day Color White, night colot 0xff1f2937
+                        Box(Modifier.background(colors.background)) {
                             if (item is RestApiListItem) {
                                 RestApiListItemUi(modifier, item, onItemClick)
                             } else {
@@ -67,7 +64,7 @@ fun NetworkLogScreenContent(
                         if (index < lazyItems.itemCount) {
                             HorizontalDivider(
                                 thickness = 0.5.dp,
-                                color = Color(0xFFE5E7EB),
+                                color = Color(0x4DE5E7EB),
                             )
                         }
                     }
