@@ -50,7 +50,7 @@ fun NetworkLogScreenContent(
             LazyColumn {
                 items(lazyItems.itemCount) { index ->
                     lazyItems[index]?.let { item ->
-                        Box(Modifier.background(colors.background)) {
+                        Box(){
                             if (item is RestApiListItem) {
                                 RestApiListItemUi(modifier, item, onItemClick)
                             } else {
@@ -61,6 +61,7 @@ fun NetworkLogScreenContent(
                                 )
                             }
                         }
+
                         if (index < lazyItems.itemCount) {
                             HorizontalDivider(
                                 thickness = 0.5.dp,

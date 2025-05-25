@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,12 +51,11 @@ fun RestApiListItemUi(
         restApiData.responseCode in 200..299 -> StatusCodeItemColorPalettes.success.textColor
         else -> StatusCodeItemColorPalettes.fail.textColor
     }
-
     Row(modifier = Modifier
-        .padding(horizontal = 8.dp, vertical = 8.dp)
         .clickable {
             onItemClick(restApiData)
         }
+        .padding(horizontal = 8.dp, vertical = 8.dp)
         .fillMaxWidth()) {
         Text("${restApiData.responseCode}", color = statusCodeColor, fontWeight = FontWeight.Medium)
         Spacer(Modifier.width(12.dp))
