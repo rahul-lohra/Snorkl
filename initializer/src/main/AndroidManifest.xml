@@ -4,7 +4,7 @@
     <application>
         <provider
             android:name="rahul.lohra.networkmonitor.initializer.SdkInitProvider"
-            android:authorities="rahul.lohra.networkmonitor.initprovider"
+            android:authorities="${applicationId}.networkmonitor.initprovider"
             android:exported="false"
             tools:node="merge" />
 
