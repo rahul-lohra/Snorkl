@@ -3,7 +3,9 @@ package rahul.lohra.networkmonitor.notification
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -44,6 +46,7 @@ object NetworkLogNotifier {
             .setContentText(logSummary)
             .setStyle(NotificationCompat.BigTextStyle().bigText(logSummary))
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setContentIntent(getPendingIntent(context))
             .build()
 
         if (ActivityCompat.checkSelfPermission(
@@ -55,5 +58,17 @@ object NetworkLogNotifier {
             return
         }
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
+    }
+
+    private fun getPendingIntent(context: Context): PendingIntent {
+        val intent = Intent(context, Class.forName("rahul.lohra.networkmonitor.presentation.ui.NetworkMonitorActivity")).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE // Use FLAG_IMMUTABLE for Android 12+
+        )
     }
 }
