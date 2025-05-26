@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.launch
 import rahul.lohra.networkmonitor.presentation.ui.LocalNetworkMonitorViewModel
 
@@ -79,10 +80,18 @@ fun NetworkMonitorUi(
     networkLogTab: NetworkLogTab,
     navController: NavController
 ) {
+    val viewModel = LocalNetworkMonitorViewModel.current
+    val lazyItems = when (networkLogTab) {
+        NetworkLogTab.ALL -> viewModel.allUiNetworkLogs.collectAsLazyPagingItems()
+        NetworkLogTab.HTTP -> viewModel.httpNetworkLogs.collectAsLazyPagingItems()
+        NetworkLogTab.WEBSOCKET -> viewModel.wsNetworkLogs.collectAsLazyPagingItems()
+    }
+
     NetworkLogScreenContent(
         modifier,
         networkLogTab,
         navController,
+        lazyItems
     )
 }
 

@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
 import rahul.lohra.networkmonitor.NetworkListItem
 import rahul.lohra.networkmonitor.RestApiListItem
 import rahul.lohra.networkmonitor.WebsocketListItem
@@ -23,11 +23,9 @@ fun NetworkLogScreenContent(
     modifier: Modifier,
     networkLogTab: NetworkLogTab,
     navController: NavController,
+    lazyItems: LazyPagingItems<NetworkListItem>
 
 ) {
-    val viewModel = LocalNetworkMonitorViewModel.current
-    val lazyItems = viewModel.allUiNetworkLogs.collectAsLazyPagingItems()
-
     when {
         lazyItems.loadState.refresh is LoadState.Loading -> {
             LoadingView()

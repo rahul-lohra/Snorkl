@@ -43,6 +43,12 @@ class NetworkMonitorViewmodel (
     val allUiNetworkLogs: Flow<PagingData<NetworkListItem>> = useCase.getPagedLogs()
         .cachedIn(viewModelScope)
 
+    val httpNetworkLogs: Flow<PagingData<NetworkListItem>> = useCase.getFilteredNetworkLogs { it.networkType == "rest" }
+        .cachedIn(viewModelScope)
+
+    val wsNetworkLogs: Flow<PagingData<NetworkListItem>> = useCase.getFilteredNetworkLogs { it.networkType == "ws" }
+        .cachedIn(viewModelScope)
+
     private val _shareIntentFlow = MutableSharedFlow<ExportData>()
     val shareIntentFlow : Flow<ExportData> = _shareIntentFlow
 

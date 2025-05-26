@@ -1,7 +1,9 @@
 package rahul.lohra.networkmonitor
 
 
-interface NetworkListItem
+interface NetworkListItem {
+    val networkType:String
+}
 
 class RestApiListItem(
     val id: String,
@@ -14,7 +16,7 @@ class RestApiListItem(
     val body: String,
     val durationMs: Long,
     val requestBody: String,
-    val networkType: String = "rest"
+    override val networkType: String = "rest"
 ) : NetworkListItem
 
 class WebsocketListItem(
@@ -24,5 +26,6 @@ class WebsocketListItem(
     val responseCode: Int,
     val body: String,
     val durationMs: Long,
-    val direction: String
+    val direction: String,
+    override val networkType: String = "ws"
 ): NetworkListItem
