@@ -19,11 +19,6 @@ android {
     defaultConfig {
 //        applicationId = "rahul.lohra.networkmonitor"
         minSdk = 24
-//        targetSdk = 35
-//        versionCode = 1
-//        versionName = "1.0"
-
-//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -83,12 +78,19 @@ dependencies {
     implementation (libs.paging.compose)
     implementation (libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.androidx.navigation.compose)
-    implementation(libs.room.runtime)
-    implementation(project(":data"))
-    implementation(project(":network"))
-    implementation(project(":initializer"))
-    implementation(project(":core"))
     debugImplementation(libs.ui.tooling)
+
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.paging)
+    implementation(libs.room.ktx)
+    implementation(libs.kotlinx.serialization.json)
 
 }
 

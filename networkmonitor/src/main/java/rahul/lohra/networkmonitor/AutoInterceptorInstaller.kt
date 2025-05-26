@@ -5,7 +5,7 @@ import rahul.lohra.networkmonitor.network.NetworkWebSocketListener
 
 object AutoInterceptorInstaller {
 
-        init {
+        fun inject() {
             try {
                 // --- Interceptor Registration ---
                 val interceptorRegistryClass = Class.forName("io.getstream.video.android.core.interceptor.StreamOkhttpInterceptorRegistry")
