@@ -22,7 +22,7 @@ object NetworkLogNotifier {
 
     fun setup(context: Context) {
         initChannel(context)
-        NotificationSdkInitializer.initialize(context)
+        DatabaseObserver().initialize(context)
     }
 
     internal fun initChannel(context: Context) {

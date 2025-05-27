@@ -10,7 +10,7 @@ import rahul.lohra.networkmonitor.data.local.db.DatabaseProvider
 import rahul.lohra.networkmonitor.data.local.entities.NetworkType
 import java.util.Locale
 
-object NotificationSdkInitializer {
+class DatabaseObserver {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val listOfText = FixedSizeQueue<String>(5)

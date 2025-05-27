@@ -7,7 +7,9 @@
     <application>
         <activity
             android:name=".presentation.ui.NetworkMonitorActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="rahul.lohra.networkmonitor">
         </activity>
 
         <provider
