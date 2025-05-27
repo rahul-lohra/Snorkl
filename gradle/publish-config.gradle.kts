@@ -2,7 +2,7 @@ import java.util.Properties
 
 apply(plugin = "maven-publish")
 
-val artifactVersion = "0.0.22-kotlin1.9"
+val artifactVersion = "0.0.23-kotlin1.9"
 val artifactGroupId = "rahul.lohra.networkmonitor"
 val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/API-WebSocket-Viewer")
 
