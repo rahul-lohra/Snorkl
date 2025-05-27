@@ -30,10 +30,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        if(true){
-            startActivity(Intent(this, NetworkMonitorActivity::class.java))
-            return
-        }
+//        if(true){
+//            startActivity(Intent(this, NetworkMonitorActivity::class.java))
+//            return
+//        }
         setContent {
             AndroidNetworkMonitorTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -85,6 +85,13 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             WebsocketClient.close()
         }) {
             Text("Close WS events")
+        }
+
+        Button(onClick = {
+            val intent = Intent(context, NetworkMonitorActivity::class.java)
+            context.startActivity(intent)
+        }) {
+            Text("Open Network Activity")
         }
 
 

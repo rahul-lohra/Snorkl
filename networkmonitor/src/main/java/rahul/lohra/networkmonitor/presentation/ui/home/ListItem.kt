@@ -9,21 +9,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import rahul.lohra.networkmonitor.NetworkListItem
+import rahul.lohra.networkmonitor.R
 import rahul.lohra.networkmonitor.RestApiListItem
 import rahul.lohra.networkmonitor.WebsocketListItem
 import rahul.lohra.networkmonitor.core.TimeUtil
+import rahul.lohra.networkmonitor.presentation.ui.NetworkMonitorColorDeepNaviBlue
+import rahul.lohra.networkmonitor.presentation.ui.NetworkMonitorColorPurple
 
 
 @Composable
@@ -61,17 +71,9 @@ fun RestApiListItemUi(
         Spacer(Modifier.width(12.dp))
         Column {
             Row {
-                Text(
-                    modifier = Modifier
-                        .background(
-                            color = restApiMethodColor.bgColor,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .padding(horizontal = 4.dp),
-                    color = restApiMethodColor.textColor,
-                    fontSize = 12.sp,
-                    text = restApiData.method.capitalize(), fontWeight = FontWeight.SemiBold
-                )
+                ChipsUi(restApiData.method.capitalize(),
+                    restApiMethodColor.bgColor,
+                    restApiMethodColor.textColor)
                 Spacer(Modifier.width(8.dp))
                 Text(
                     Uri.parse(restApiData.requestUrl).path ?: restApiData.requestUrl,
@@ -114,6 +116,108 @@ fun WebsocketListItemUi(
     }
 }
 
+@Preview
+@Composable
+fun WebsocketListItemUiDayPreview() {
+    Box(modifier = Modifier.background(Color.White)){
+        val isDark = false
+        val restApiMethodColor = ListItemColorPalettes.light.getText
+        val timeTextColor = if (isDark) Color.White else Color.Black
+val response = """ 
+    {"type":"notification","message":"New update available"}
+""".trimIndent()
+
+        Column(modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .fillMaxWidth()) {
+            Row() {
+
+                ChipsUi("WS", restApiMethodColor.bgColor,
+                    restApiMethodColor.textColor)
+
+                Icon(
+                    painter = painterResource(id = R.drawable.networkmonitor_arrow_up),
+                    contentDescription = "outgoing",
+                    tint = NetworkMonitorColorPurple,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("outgoing", fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal)
+                Spacer(Modifier.width(8.dp))
+                ChipsUi("opened", restApiMethodColor.bgColor,
+                    restApiMethodColor.textColor)
+            }
+            Row {
+                Text("connect", color = NetworkMonitorColorPurple)
+                Spacer(Modifier.width(8.dp))
+                Text("socket.example.com/")
+            }
+
+            Text(modifier = Modifier.padding(top = 8.dp, start = 60.dp),
+                color = Color(0xff9CA4AF),
+                text = response, maxLines = 1)
+            Row(modifier = Modifier.padding(top = 8.dp, start = 60.dp)) {
+                Text("09:07:55 AM", color = timeTextColor)
+                Spacer(Modifier.width(10.dp))
+                Text("⏱\uFE0F 2s", color = timeTextColor)
+            }
+        }
+
+    }
+}
+
+@Preview
+@Composable
+fun WebsocketListItemUiNightPreview() {
+    Box(modifier = Modifier.background(Color.White)){
+        val isDark = true
+        val restApiMethodColor = ListItemColorPalettes.dark.getText
+        val timeTextColor = if (isDark) Color.White else Color.Black
+val response = """ 
+    {"type":"notification","message":"New update available"}
+""".trimIndent()
+        Box(Modifier.background(color = NetworkMonitorColorDeepNaviBlue)){
+            Column(modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .background(color = NetworkMonitorColorDeepNaviBlue)
+                .fillMaxWidth()) {
+                Row() {
+                    ChipsUi("WS", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor)
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.networkmonitor_arrow_up),
+                        contentDescription = "outgoing",
+                        tint = NetworkMonitorColorPurple,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("outgoing", fontSize = 12.sp,
+                        color = timeTextColor,
+                        fontWeight = FontWeight.Normal)
+                    Spacer(Modifier.width(8.dp))
+                    ChipsUi("opened", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor)
+                }
+                Row {
+                    Text("connect", color = NetworkMonitorColorPurple)
+                    Spacer(Modifier.width(8.dp))
+                    Text("socket.example.com/", color = timeTextColor)
+                }
+                Text(modifier = Modifier.padding(top = 8.dp, start = 60.dp),
+                    color = Color(0xff9CA4AF),
+                    text = response, maxLines = 1)
+                Row(modifier = Modifier.padding(top = 8.dp, start = 60.dp)) {
+                    Text("09:07:55 AM", color = timeTextColor)
+                    Spacer(Modifier.width(10.dp))
+                    Text("⏱\uFE0F 2s", color = timeTextColor)
+                }
+            }
+        }
+    }
+}
+
 @Preview()
 @Composable
 fun RestApiListItemUiDayPreview() {
@@ -131,17 +235,8 @@ fun RestApiListItemUiDayPreview() {
             Spacer(Modifier.width(12.dp))
             Column {
                 Row {
-                    Text(
-                        modifier = Modifier
-                            .background(
-                                restApiMethodColor.bgColor,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(vertical = 1.dp, horizontal = 4.dp),
-                        color = restApiMethodColor.textColor,
-                        fontSize = 12.sp,
-                        text = "GET", fontWeight = FontWeight.SemiBold
-                    )
+                    ChipsUi("GET", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor)
                     Spacer(Modifier.width(8.dp))
                     Text("/api/api", color = timeTextColor)
                 }
@@ -161,6 +256,21 @@ fun RestApiListItemUiDayPreview() {
     }
 }
 
+@Composable
+internal fun ChipsUi(text: String, bgColor: Color, textColor: Color) {
+    Text(
+        modifier = Modifier
+            .background(
+                bgColor,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(vertical = 1.dp, horizontal = 4.dp),
+        color = textColor,
+        fontSize = 12.sp,
+        text = text, fontWeight = FontWeight.SemiBold
+    )
+}
+
 @Preview
 @Composable
 fun RestApiListItemUiNightPreview() {
@@ -168,7 +278,7 @@ fun RestApiListItemUiNightPreview() {
     val restApiMethodColor = ListItemColorPalettes.dark.getText
     val timeTextColor = if (isDark) Color.White else Color.Black
 
-    Box(modifier = Modifier.background(Color(0xff202A37))) {
+    Box(modifier = Modifier.background(NetworkMonitorColorDeepNaviBlue)) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp)
@@ -182,17 +292,8 @@ fun RestApiListItemUiNightPreview() {
             Spacer(Modifier.width(12.dp))
             Column {
                 Row {
-                    Text(
-                        modifier = Modifier
-                            .background(
-                                Color(0xff4ADE80),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(vertical = 1.dp, horizontal = 4.dp),
-                        color = restApiMethodColor.textColor,
-                        fontSize = 12.sp,
-                        text = "GET", fontWeight = FontWeight.SemiBold
-                    )
+                    ChipsUi("GET", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor)
                     Spacer(Modifier.width(8.dp))
                     Text("/api/api/", color = timeTextColor)
                 }

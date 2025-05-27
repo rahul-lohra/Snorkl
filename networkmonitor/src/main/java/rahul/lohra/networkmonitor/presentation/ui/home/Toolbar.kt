@@ -73,7 +73,10 @@ fun NetworkMonitorToolbarBody(
     onShareTextClick: () -> Unit,
     onExportFromDeviceClick: () -> Unit
 ) {
-    TopAppBar(modifier = modifier, title = { Text("My Toolbar") }, actions = {
+    val context = LocalContext.current
+    val appName = context.applicationInfo.loadLabel(context.packageManager).toString()
+
+    TopAppBar(modifier = modifier, title = { Text(appName) }, actions = {
         IconButton(onClick = onSearchClick) {
             Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
         }

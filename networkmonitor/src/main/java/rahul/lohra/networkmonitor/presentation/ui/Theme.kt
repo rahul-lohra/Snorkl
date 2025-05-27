@@ -23,12 +23,14 @@ val NetworkMonitorColorPink80 = Color(0xFFEFB8C8)
 val NetworkMonitorColorPurple40 = Color(0xFF6650a4)
 val NetworkMonitorColorPurpleGrey40 = Color(0xFF625b71)
 val NetworkMonitorColorPink40 = Color(0xFF7D5260)
+val NetworkMonitorColorPurple = Color(0xFFBF80FF)
+val NetworkMonitorColorDeepNaviBlue = Color(0xff202A37)
 
 private val NetworkMonitorColorDarkColorScheme = darkColorScheme(
     primary = NetworkMonitorColorPurple80,
     secondary = NetworkMonitorColorPurpleGrey80,
     tertiary = NetworkMonitorColorPink80,
-    background = Color(0xff202A37),
+    background = NetworkMonitorColorDeepNaviBlue,
 
 )
 

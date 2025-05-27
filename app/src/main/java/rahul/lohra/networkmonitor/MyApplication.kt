@@ -9,6 +9,8 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import okio.ByteString
+import rahul.lohra.networkmonitor.network.NetworkWebSocketListener
 import java.io.IOException
 
 class MyApplication : Application() {
@@ -71,8 +73,10 @@ object WebsocketClient {
                 webSocket = null
             }
         }
-
-        client.newWebSocket(request, InspectingWebSocketListener(listener))
+        val wrappedListener = MySocketListenerRegistry.wrap(listener)
+        MySocketListenerRegistry.register(NetworkWebSocketListener())
+        MySocketListenerRegistry.register(InspectingWebSocketListener())
+        client.newWebSocket(request, wrappedListener)
     }
 
     fun sendMessage(message: String) {
@@ -82,5 +86,47 @@ object WebsocketClient {
     fun close() {
         webSocket?.close(1000, "Closing from user")
         webSocket = null
+    }
+}
+
+object MySocketListenerRegistry {
+    private val listeners = mutableListOf<WebSocketListener>()
+
+    fun register(listener: WebSocketListener) {
+        listeners += listener
+    }
+
+    internal fun wrap(baseListener: WebSocketListener): WebSocketListener {
+        return object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                listeners.forEach { it.onOpen(webSocket, response) }
+                baseListener.onOpen(webSocket, response)
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                listeners.forEach { it.onMessage(webSocket, text) }
+                baseListener.onMessage(webSocket, text)
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                listeners.forEach { it.onMessage(webSocket, bytes) }
+                baseListener.onMessage(webSocket, bytes)
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                listeners.forEach { it.onClosing(webSocket, code, reason) }
+                baseListener.onClosing(webSocket, code, reason)
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                listeners.forEach { it.onClosed(webSocket, code, reason) }
+                baseListener.onClosed(webSocket, code, reason)
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                listeners.forEach { it.onFailure(webSocket, t, response) }
+                baseListener.onFailure(webSocket, t, response)
+            }
+        }
     }
 }
