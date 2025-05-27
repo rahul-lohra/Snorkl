@@ -1,6 +1,5 @@
 package rahul.lohra.networkmonitor.presentation.viewmodel
 
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -12,12 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import rahul.lohra.networkmonitor.network.NetworkProvider
 import rahul.lohra.networkmonitor.NetworkListItem
 import rahul.lohra.networkmonitor.data.NetworkData
 import rahul.lohra.networkmonitor.domain.usecas.ExportData
 import rahul.lohra.networkmonitor.domain.usecas.GetPagedNetworkLogsUseCase
 import rahul.lohra.networkmonitor.domain.usecas.ShareUseCase
+import rahul.lohra.networkmonitor.network.NetworkProvider
 import rahul.lohra.networkmonitor.presentation.data.UiInitial
 import rahul.lohra.networkmonitor.presentation.data.UiState
 import rahul.lohra.networkmonitor.presentation.data.UiSuccess
