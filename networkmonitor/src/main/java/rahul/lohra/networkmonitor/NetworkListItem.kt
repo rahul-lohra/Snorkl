@@ -1,14 +1,13 @@
 package rahul.lohra.networkmonitor
 
-import rahul.lohra.networkmonitor.data.WebSocketEventType
-
 
 interface NetworkListItem {
+    val id:String
     val networkType:String
 }
 
 class RestApiListItem(
-    val id: String,
+    override val id: String,
     val timestamp: Long,
     val requestUrl: String,
     val method: String,
@@ -22,7 +21,7 @@ class RestApiListItem(
 ) : NetworkListItem
 
 class WebsocketListItem(
-    val id: String,
+    override val id: String,
     val timestamp: Long,
     val requestUrl: String,
     val body: String,

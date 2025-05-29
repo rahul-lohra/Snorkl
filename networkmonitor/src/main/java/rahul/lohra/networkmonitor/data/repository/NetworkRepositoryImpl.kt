@@ -2,6 +2,7 @@ package rahul.lohra.networkmonitor.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import kotlinx.coroutines.flow.Flow
 import rahul.lohra.networkmonitor.data.local.dao.NetworkLogDao
 import rahul.lohra.networkmonitor.data.local.entities.NetworkEntity
 
@@ -22,5 +23,9 @@ class NetworkRepositoryImpl(
 
     override suspend fun getAllLogs(): List<NetworkEntity> {
         return dao.getAll()
+    }
+
+    override suspend fun getLog(id: String): Flow<NetworkEntity> {
+        return dao.getNetworkLog(id)
     }
 }

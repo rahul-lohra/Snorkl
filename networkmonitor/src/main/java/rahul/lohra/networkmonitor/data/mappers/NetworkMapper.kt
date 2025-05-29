@@ -94,8 +94,7 @@ fun NetworkEntity.toRestApiData(): RestApiData? =
         )
     } else null
 
-fun NetworkEntity.toWebSocketLogEntry(): WebSocketLogEntry? =
-    if(networkType == NetworkType.WEBSOCKET.title){
+fun NetworkEntity.toWebSocketLogEntry(): WebSocketLogEntry =
         WebSocketLogEntry(
             id = id,
             requestUrl = requestUrl,
@@ -110,7 +109,6 @@ fun NetworkEntity.toWebSocketLogEntry(): WebSocketLogEntry? =
             networkType = this.networkType,
             metadata = Gson().fromJson(this.metaData, object : TypeToken<Map<String, String>>() {}.type)
         )
-    } else null
 
 fun NetworkEntity.toWebsocketData(): WebsocketData? =
     if (networkType == "ws") {

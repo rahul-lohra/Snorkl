@@ -32,4 +32,7 @@ interface NetworkLogDao {
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC LIMIT 1")
     fun getLatestNetworkLog(): Flow<NetworkEntity?>
 
+    @Query("SELECT * FROM network_logs WHERE id = :id LIMIT 1")
+    fun getNetworkLog(id: String): Flow<NetworkEntity>
+
 }

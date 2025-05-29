@@ -17,6 +17,7 @@ import rahul.lohra.networkmonitor.NetworkListItem
 import rahul.lohra.networkmonitor.RestApiListItem
 import rahul.lohra.networkmonitor.WebsocketListItem
 import rahul.lohra.networkmonitor.presentation.ui.LocalNetworkMonitorViewModel
+import rahul.lohra.networkmonitor.presentation.ui.Screen
 
 @Composable
 fun NetworkLogScreenContent(
@@ -44,7 +45,8 @@ fun NetworkLogScreenContent(
             val viewModel = LocalNetworkMonitorViewModel.current
             val onItemClick = { networkData: NetworkListItem ->
                 viewModel.setDetailScreenData(networkData)
-                navController.navigate("details")
+                val message = networkData.id
+                navController.navigate(Screen.Details(message).createRoute(message))
             }
             val colors = MaterialTheme.colorScheme
             LazyColumn {

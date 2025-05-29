@@ -28,5 +28,10 @@ data class NetworkEntity(
 
 enum class NetworkType(val title: String) {
     REST("rest"),
-    WEBSOCKET("ws")
+    WEBSOCKET("ws");
+
+    companion object {
+        fun fromTitle(title: String): NetworkType? =
+            entries.find { it.title.equals(title, ignoreCase = true) }
+    }
 }
