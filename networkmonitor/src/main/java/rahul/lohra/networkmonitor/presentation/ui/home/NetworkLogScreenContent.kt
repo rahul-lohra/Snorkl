@@ -50,16 +50,13 @@ fun NetworkLogScreenContent(
             LazyColumn {
                 items(lazyItems.itemCount) { index ->
                     lazyItems[index]?.let { item ->
-                        Box(){
-                            if (item is RestApiListItem) {
-                                RestApiListItemUi(modifier, item, onItemClick)
-                            } else {
-                                WebsocketListItemUi(
-                                    modifier,
-                                    item as WebsocketListItem,
-                                    onItemClick
-                                )
-                            }
+                        if (item is RestApiListItem) {
+                            RestApiListItemUi(item, onItemClick)
+                        } else {
+                            WebsocketListItemUi(
+                                item as WebsocketListItem,
+                                onItemClick
+                            )
                         }
 
                         if (index < lazyItems.itemCount) {

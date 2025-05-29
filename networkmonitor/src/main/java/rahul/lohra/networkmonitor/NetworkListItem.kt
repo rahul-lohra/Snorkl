@@ -1,5 +1,7 @@
 package rahul.lohra.networkmonitor
 
+import rahul.lohra.networkmonitor.data.WebSocketEventType
+
 
 interface NetworkListItem {
     val networkType:String
@@ -23,9 +25,11 @@ class WebsocketListItem(
     val id: String,
     val timestamp: Long,
     val requestUrl: String,
-    val responseCode: Int,
     val body: String,
     val durationMs: Long,
     val direction: String,
+    val eventType: String,
+    val messageType: String,
+    val messageSize: String,
     override val networkType: String = "ws"
 ): NetworkListItem

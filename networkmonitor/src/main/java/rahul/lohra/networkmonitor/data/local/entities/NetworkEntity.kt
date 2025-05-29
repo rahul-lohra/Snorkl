@@ -14,9 +14,15 @@ data class NetworkEntity(
     val responseCode: Int,
     val responseHeaders: String?,  // Stored as JSON string
     val body: String?,
+    val responseSize: Int?,
+    val error: String?,
     val durationMs: Long?,         // Only for REST
     val requestBody: String?,      // Only for REST
     val direction: String?,        // Only for WS
+    val eventType: String?,        // Only for WS
+    val messageType: String?,        // Only for WS
+    val connectionId: String?,        // Only for WS
+    val metaData: String?,          // Only for WS
     val networkType: String        // "rest" or "ws"
 )
 

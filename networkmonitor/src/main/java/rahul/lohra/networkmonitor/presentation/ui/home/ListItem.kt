@@ -9,19 +9,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,13 +28,13 @@ import rahul.lohra.networkmonitor.R
 import rahul.lohra.networkmonitor.RestApiListItem
 import rahul.lohra.networkmonitor.WebsocketListItem
 import rahul.lohra.networkmonitor.core.TimeUtil
+import rahul.lohra.networkmonitor.data.WebSocketEventType
 import rahul.lohra.networkmonitor.presentation.ui.NetworkMonitorColorDeepNaviBlue
 import rahul.lohra.networkmonitor.presentation.ui.NetworkMonitorColorPurple
 
 
 @Composable
 fun RestApiListItemUi(
-    modifier: Modifier,
     restApiData: RestApiListItem,
     onItemClick: (NetworkListItem) -> Unit
 ) {
@@ -71,9 +67,11 @@ fun RestApiListItemUi(
         Spacer(Modifier.width(12.dp))
         Column {
             Row {
-                ChipsUi(restApiData.method.capitalize(),
+                ChipsUi(
+                    restApiData.method.capitalize(),
                     restApiMethodColor.bgColor,
-                    restApiMethodColor.textColor)
+                    restApiMethodColor.textColor
+                )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     Uri.parse(restApiData.requestUrl).path ?: restApiData.requestUrl,
@@ -97,21 +95,134 @@ fun RestApiListItemUi(
 
 @Composable
 fun WebsocketListItemUi(
-    modifier: Modifier,
-    websocketData: WebsocketListItem,
+    websocketListItem: WebsocketListItem,
     onItemClick: (NetworkListItem) -> Unit
 ) {
-    Row(modifier = modifier.clickable {
-        onItemClick(websocketData)
-    }) {
-        Text("Response Code")
-        Column {
-            Text("Url")
-            Text("Host")
-            Row {
-                Text("${websocketData.timestamp}")
-//                Text("${websocketData.durationMs}")
+    val isDark = isSystemInDarkTheme()
+    val restApiMethodColorsScheme = if (isDark) {
+        ListItemColorPalettes.dark
+    } else {
+        ListItemColorPalettes.light
+    }
+    val wsEventType = WebSocketEventType.valueOf(websocketListItem.eventType)
+
+    val wsTextColor = getWsTextColor(isDark, wsEventType)
+    val timeTextColor = if (isDark) Color.White else Color.Black
+
+    Column(modifier = Modifier
+        .clickable {
+            onItemClick(websocketListItem)
+        }
+        .padding(horizontal = 8.dp, vertical = 8.dp)
+        .fillMaxWidth()) {
+        Row() {
+            ChipsUi(
+                "WS", wsTextColor.bgColor,
+                wsTextColor.textColor
+            )
+            WsArrowIcon(websocketListItem)
+            Spacer(Modifier.width(8.dp))
+            WSDirectionText(websocketListItem, timeTextColor)
+            Spacer(Modifier.width(8.dp))
+            WSStatusChips(websocketListItem, wsTextColor)
+        }
+        Row {
+            WSConnectText(websocketListItem)
+            Spacer(Modifier.width(8.dp))
+            Text("${Uri.parse(websocketListItem.requestUrl).host}", color = timeTextColor)
+        }
+        Row(modifier = Modifier.padding(top = 8.dp, start = 60.dp)) {
+            Text(TimeUtil.formatTimestamp(websocketListItem.timestamp), color = timeTextColor)
+            Spacer(Modifier.width(10.dp))
+            Text("⏱\uFE0F${websocketListItem.durationMs / 1000}s", color = timeTextColor)
+        }
+    }
+}
+
+internal fun getWsTextColor(isDarkMode: Boolean, wsEventType: WebSocketEventType): NetworkMethodTextColorStyle {
+    return when (wsEventType) {
+        WebSocketEventType.CONNECTION_OPEN, WebSocketEventType.MESSAGE -> {
+            if (isDarkMode) {
+                NetworkMethodTextColorStyle(Color(0xff49DE80), Color(0xff2B4448))
+            } else {
+                ListItemColorPalettes.light.getText
             }
+        }
+
+        WebSocketEventType.CONNECTION_FAILURE -> {
+            if (isDarkMode) {
+                NetworkMethodTextColorStyle(Color(0xff9BA3AF), Color(0xff2C3543))
+            } else {
+                NetworkMethodTextColorStyle(Color(0xff9BA3AF), Color(0xffF5F6F7))
+            }
+        }
+
+        else -> {
+            if (isDarkMode) {
+                ListItemColorPalettes.dark.errorText
+            } else {
+                ListItemColorPalettes.light.errorText
+            }
+        }
+    }
+}
+
+@Composable
+internal fun WSConnectText(websocketListItem: WebsocketListItem) {
+    val webSocketEventType = WebSocketEventType.valueOf(websocketListItem.eventType)
+    val text = when (webSocketEventType) {
+        WebSocketEventType.CONNECTION_OPEN-> "connect"
+        WebSocketEventType.CONNECTION_FAILURE-> "error"
+        WebSocketEventType.CONNECTION_CLOSED-> "disconnected"
+        WebSocketEventType.CONNECTION_CLOSING-> "disconnecting"
+        WebSocketEventType.MESSAGE-> "message"
+    }
+    Text(text, color = NetworkMonitorColorPurple)
+}
+
+@Composable
+internal fun WSStatusChips(
+    websocketListItem: WebsocketListItem,
+    colorStyle: NetworkMethodTextColorStyle
+) {
+    val text = when (websocketListItem.direction) { //TODO Rahul needs refactoring
+        "incoming", "outgoing" -> "opened"
+        else -> "closed"
+    }
+    ChipsUi(
+        text, colorStyle.bgColor,
+        colorStyle.textColor
+    )
+}
+
+@Composable
+fun WSDirectionText(websocketListItem: WebsocketListItem, textColor: Color) {
+    Text(
+        websocketListItem.direction, fontSize = 12.sp,
+        color = textColor,
+        fontWeight = FontWeight.Normal
+    )
+}
+
+@Composable
+fun WsArrowIcon(websocketListItem: WebsocketListItem) {
+    when (websocketListItem.direction) {
+        "incoming" -> {
+            Icon(
+                painter = painterResource(id = R.drawable.networkmonitor_arrow_down),
+                contentDescription = "incoming",
+                tint = NetworkMonitorColorPurple,
+                modifier = Modifier.size(18.dp)
+            )
+        }
+
+        "outgoing" -> {
+            Icon(
+                painter = painterResource(id = R.drawable.networkmonitor_arrow_up),
+                contentDescription = "outgoing",
+                tint = NetworkMonitorColorPurple,
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }
@@ -119,21 +230,25 @@ fun WebsocketListItemUi(
 @Preview
 @Composable
 fun WebsocketListItemUiDayPreview() {
-    Box(modifier = Modifier.background(Color.White)){
+    Box(modifier = Modifier.background(Color.White)) {
         val isDark = false
         val restApiMethodColor = ListItemColorPalettes.light.getText
         val timeTextColor = if (isDark) Color.White else Color.Black
-val response = """ 
+        val response = """ 
     {"type":"notification","message":"New update available"}
 """.trimIndent()
 
-        Column(modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 8.dp)
-            .fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .fillMaxWidth()
+        ) {
             Row() {
 
-                ChipsUi("WS", restApiMethodColor.bgColor,
-                    restApiMethodColor.textColor)
+                ChipsUi(
+                    "WS", restApiMethodColor.bgColor,
+                    restApiMethodColor.textColor
+                )
 
                 Icon(
                     painter = painterResource(id = R.drawable.networkmonitor_arrow_up),
@@ -142,11 +257,15 @@ val response = """
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("outgoing", fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal)
+                Text(
+                    "outgoing", fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal
+                )
                 Spacer(Modifier.width(8.dp))
-                ChipsUi("opened", restApiMethodColor.bgColor,
-                    restApiMethodColor.textColor)
+                ChipsUi(
+                    "opened", restApiMethodColor.bgColor,
+                    restApiMethodColor.textColor
+                )
             }
             Row {
                 Text("connect", color = NetworkMonitorColorPurple)
@@ -154,9 +273,11 @@ val response = """
                 Text("socket.example.com/")
             }
 
-            Text(modifier = Modifier.padding(top = 8.dp, start = 60.dp),
+            Text(
+                modifier = Modifier.padding(top = 8.dp, start = 60.dp),
                 color = Color(0xff9CA4AF),
-                text = response, maxLines = 1)
+                text = response, maxLines = 1
+            )
             Row(modifier = Modifier.padding(top = 8.dp, start = 60.dp)) {
                 Text("09:07:55 AM", color = timeTextColor)
                 Spacer(Modifier.width(10.dp))
@@ -170,21 +291,25 @@ val response = """
 @Preview
 @Composable
 fun WebsocketListItemUiNightPreview() {
-    Box(modifier = Modifier.background(Color.White)){
+    Box(modifier = Modifier.background(Color.White)) {
         val isDark = true
         val restApiMethodColor = ListItemColorPalettes.dark.getText
         val timeTextColor = if (isDark) Color.White else Color.Black
-val response = """ 
+        val response = """ 
     {"type":"notification","message":"New update available"}
 """.trimIndent()
-        Box(Modifier.background(color = NetworkMonitorColorDeepNaviBlue)){
-            Column(modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .background(color = NetworkMonitorColorDeepNaviBlue)
-                .fillMaxWidth()) {
+        Box(Modifier.background(color = NetworkMonitorColorDeepNaviBlue)) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .background(color = NetworkMonitorColorDeepNaviBlue)
+                    .fillMaxWidth()
+            ) {
                 Row() {
-                    ChipsUi("WS", restApiMethodColor.bgColor,
-                        restApiMethodColor.textColor)
+                    ChipsUi(
+                        "WS", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor
+                    )
 
                     Icon(
                         painter = painterResource(id = R.drawable.networkmonitor_arrow_up),
@@ -193,21 +318,27 @@ val response = """
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("outgoing", fontSize = 12.sp,
+                    Text(
+                        "outgoing", fontSize = 12.sp,
                         color = timeTextColor,
-                        fontWeight = FontWeight.Normal)
+                        fontWeight = FontWeight.Normal
+                    )
                     Spacer(Modifier.width(8.dp))
-                    ChipsUi("opened", restApiMethodColor.bgColor,
-                        restApiMethodColor.textColor)
+                    ChipsUi(
+                        "opened", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor
+                    )
                 }
                 Row {
                     Text("connect", color = NetworkMonitorColorPurple)
                     Spacer(Modifier.width(8.dp))
                     Text("socket.example.com/", color = timeTextColor)
                 }
-                Text(modifier = Modifier.padding(top = 8.dp, start = 60.dp),
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, start = 60.dp),
                     color = Color(0xff9CA4AF),
-                    text = response, maxLines = 1)
+                    text = response, maxLines = 1
+                )
                 Row(modifier = Modifier.padding(top = 8.dp, start = 60.dp)) {
                     Text("09:07:55 AM", color = timeTextColor)
                     Spacer(Modifier.width(10.dp))
@@ -235,8 +366,10 @@ fun RestApiListItemUiDayPreview() {
             Spacer(Modifier.width(12.dp))
             Column {
                 Row {
-                    ChipsUi("GET", restApiMethodColor.bgColor,
-                        restApiMethodColor.textColor)
+                    ChipsUi(
+                        "GET", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor
+                    )
                     Spacer(Modifier.width(8.dp))
                     Text("/api/api", color = timeTextColor)
                 }
@@ -292,8 +425,10 @@ fun RestApiListItemUiNightPreview() {
             Spacer(Modifier.width(12.dp))
             Column {
                 Row {
-                    ChipsUi("GET", restApiMethodColor.bgColor,
-                        restApiMethodColor.textColor)
+                    ChipsUi(
+                        "GET", restApiMethodColor.bgColor,
+                        restApiMethodColor.textColor
+                    )
                     Spacer(Modifier.width(8.dp))
                     Text("/api/api/", color = timeTextColor)
                 }

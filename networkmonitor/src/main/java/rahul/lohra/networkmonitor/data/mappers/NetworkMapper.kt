@@ -1,10 +1,17 @@
 package rahul.lohra.networkmonitor.data.mappers
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import rahul.lohra.networkmonitor.data.RestApiData
+import rahul.lohra.networkmonitor.data.WebSocketEventType
+import rahul.lohra.networkmonitor.data.WebSocketLogEntry
+import rahul.lohra.networkmonitor.data.WebSocketMessageDirection
+import rahul.lohra.networkmonitor.data.WebSocketMessageType
 import rahul.lohra.networkmonitor.data.WebsocketData
 import rahul.lohra.networkmonitor.data.local.entities.NetworkEntity
+import rahul.lohra.networkmonitor.data.local.entities.NetworkType
 import java.util.UUID
 
 fun RestApiData.toEntity(): NetworkEntity = NetworkEntity(
@@ -19,7 +26,13 @@ fun RestApiData.toEntity(): NetworkEntity = NetworkEntity(
     durationMs = durationMs,
     requestBody = requestBody,
     direction = null,
-    networkType = "rest"
+    networkType = "rest",
+    responseSize = body.length,
+    error = null,
+    eventType = null,
+    messageType = null,
+    connectionId = null,
+    metaData = null
 )
 
 fun WebsocketData.toEntity(): NetworkEntity = NetworkEntity(
@@ -34,7 +47,34 @@ fun WebsocketData.toEntity(): NetworkEntity = NetworkEntity(
     durationMs = null,
     requestBody = null,
     direction = direction,
-    networkType = "ws"
+    eventType = null,
+    networkType = "ws",
+    responseSize = body?.length,
+    error = null,
+    messageType = null,
+    connectionId = null,
+    metaData = null
+)
+
+fun WebSocketLogEntry.toEntity(): NetworkEntity = NetworkEntity(
+    id = id,
+    timestamp = timestamp,
+    requestUrl = requestUrl,
+    method = null,
+    requestHeaders = null,
+    responseCode = 0,
+    responseHeaders = null,
+    body = content,
+    durationMs = null,
+    requestBody = null,
+    direction = direction?.name,
+    eventType = eventType.name,
+    messageType = messageType?.name,
+    connectionId = connectionId,
+    responseSize = messageSize,
+    error = error,
+    metaData = Gson().toJson(metadata),
+    networkType = networkType
 )
 
 fun NetworkEntity.toRestApiData(): RestApiData? =
@@ -50,7 +90,25 @@ fun NetworkEntity.toRestApiData(): RestApiData? =
             body = body ?: "",
             durationMs = durationMs ?: 0L,
             requestBody = requestBody ?: "",
-            networkType = "rest"
+            networkType = networkType
+        )
+    } else null
+
+fun NetworkEntity.toWebSocketLogEntry(): WebSocketLogEntry? =
+    if(networkType == NetworkType.WEBSOCKET.title){
+        WebSocketLogEntry(
+            id = id,
+            requestUrl = requestUrl,
+            timestamp = timestamp,
+            eventType =  WebSocketEventType.valueOf(this.eventType!!),
+            direction = this.direction?.let { WebSocketMessageDirection.valueOf(it) },  // Nullable conversion
+            messageType = this.messageType?.let { WebSocketMessageType.valueOf(it) },  // Nullable conversion
+            connectionId = this.connectionId!!,
+            messageSize = this.responseSize,
+            content = this.body,
+            error = this.error,
+            networkType = this.networkType,
+            metadata = Gson().fromJson(this.metaData, object : TypeToken<Map<String, String>>() {}.type)
         )
     } else null
 
