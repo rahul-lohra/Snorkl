@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.network
+package rahul.lohra.snorkl.network
 
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -8,9 +8,9 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
-import rahul.lohra.networkmonitor.data.WebsocketData
-import rahul.lohra.networkmonitor.data.local.db.DatabaseProvider
-import rahul.lohra.networkmonitor.data.mappers.toEntity
+import rahul.lohra.snorkl.data.WebsocketData
+import rahul.lohra.snorkl.data.local.db.DatabaseProvider
+import rahul.lohra.snorkl.data.mappers.toEntity
 
 class NetworkWebSocketListener() : WebSocketListener() {
 

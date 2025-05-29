@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.ui.theme
+package rahul.lohra.snorkl.ui.theme
 
 import android.app.Activity
 import android.os.Build

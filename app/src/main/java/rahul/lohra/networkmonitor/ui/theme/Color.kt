@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.ui.theme
+package rahul.lohra.snorkl.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

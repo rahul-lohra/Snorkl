@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor
+package rahul.lohra.snorkl
 
 import android.content.Intent
 import android.os.Bundle
@@ -21,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import rahul.lohra.networkmonitor.Util
-import rahul.lohra.networkmonitor.presentation.ui.NetworkMonitorActivity
-import rahul.lohra.networkmonitor.ui.theme.AndroidNetworkMonitorTheme
+import rahul.lohra.snorkl.Util
+import rahul.lohra.snorkl.presentation.ui.NetworkMonitorActivity
+import rahul.lohra.snorkl.ui.theme.AndroidNetworkMonitorTheme
 
 
 class MainActivity : ComponentActivity() {

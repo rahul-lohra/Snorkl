@@ -2,14 +2,13 @@ import java.util.Properties
 
 apply(plugin = "maven-publish")
 
-val artifactVersion = "0.0.23-kotlin1.9"
-val artifactGroupId = "rahul.lohra.networkmonitor"
+val artifactVersion = "0.0.1-kotlin1.9"
+val artifactGroupId = "rahul.lohra.snorkl"
 val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/API-WebSocket-Viewer")
 
 val localProperties = Properties().apply {
     load(rootProject.file("local.properties").inputStream())
 }
-
 
 afterEvaluate {
     extensions.configure<PublishingExtension>("publishing") {

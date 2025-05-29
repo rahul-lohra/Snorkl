@@ -1,7 +1,7 @@
-package rahul.lohra.networkmonitor.data.repository
+package rahul.lohra.snorkl.data.repository
 
 import androidx.paging.Pager
-import rahul.lohra.networkmonitor.data.local.entities.NetworkEntity
+import rahul.lohra.snorkl.data.local.entities.NetworkEntity
 
 interface NetworkRepository {
     fun getPagedNetworkLogs(): Pager<Int, NetworkEntity>

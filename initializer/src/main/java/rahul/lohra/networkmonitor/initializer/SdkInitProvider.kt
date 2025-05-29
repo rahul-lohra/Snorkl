@@ -1,11 +1,11 @@
-package rahul.lohra.networkmonitor.initializer
+package rahul.lohra.snorkl.initializer
 
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import rahul.lohra.networkmonitor.core.SdkContextHolder
-import rahul.lohra.networkmonitor.notification.NetworkLogNotifier
+import rahul.lohra.snorkl.core.SdkContextHolder
+import rahul.lohra.snorkl.notification.NetworkLogNotifier
 
 class SdkInitProvider : ContentProvider() {
 

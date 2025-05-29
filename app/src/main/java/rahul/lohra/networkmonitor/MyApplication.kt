@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor
+package rahul.lohra.snorkl
 
 import android.app.Application
 import android.util.Log
@@ -10,7 +10,7 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
-import rahul.lohra.networkmonitor.network.NetworkWebSocketListener
+import rahul.lohra.snorkl.network.NetworkWebSocketListener
 import java.io.IOException
 
 class MyApplication : Application() {

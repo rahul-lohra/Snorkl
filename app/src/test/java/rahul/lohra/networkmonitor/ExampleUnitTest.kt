@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor
+package rahul.lohra.snorkl
 
 import org.junit.Test
 

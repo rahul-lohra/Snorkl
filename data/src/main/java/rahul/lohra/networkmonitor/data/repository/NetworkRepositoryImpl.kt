@@ -1,9 +1,9 @@
-package rahul.lohra.networkmonitor.data.repository
+package rahul.lohra.snorkl.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import rahul.lohra.networkmonitor.data.local.dao.NetworkLogDao
-import rahul.lohra.networkmonitor.data.local.entities.NetworkEntity
+import rahul.lohra.snorkl.data.local.dao.NetworkLogDao
+import rahul.lohra.snorkl.data.local.entities.NetworkEntity
 
 class NetworkRepositoryImpl(
     private val dao: NetworkLogDao

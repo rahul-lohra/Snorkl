@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.ui.theme
+package rahul.lohra.snorkl.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

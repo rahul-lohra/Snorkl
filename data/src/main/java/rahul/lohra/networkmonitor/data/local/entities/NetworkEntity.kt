@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.data.local.entities
+package rahul.lohra.snorkl.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

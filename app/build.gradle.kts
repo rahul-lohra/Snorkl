@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "rahul.lohra.networkmonitor"
+    namespace = "rahul.lohra.snorkl"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "rahul.lohra.networkmonitor"
+        applicationId = "rahul.lohra.snorkl"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -60,7 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(project(":networkmonitor"))
+    implementation(project(":snorkl"))
     implementation(libs.okhttp)
 
     testImplementation(libs.junit)

@@ -1,10 +1,10 @@
-package rahul.lohra.networkmonitor.data.mappers
+package rahul.lohra.snorkl.data.mappers
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import rahul.lohra.networkmonitor.data.RestApiData
-import rahul.lohra.networkmonitor.data.WebsocketData
-import rahul.lohra.networkmonitor.data.local.entities.NetworkEntity
+import rahul.lohra.snorkl.data.RestApiData
+import rahul.lohra.snorkl.data.WebsocketData
+import rahul.lohra.snorkl.data.local.entities.NetworkEntity
 import java.util.UUID
 
 fun RestApiData.toEntity(): NetworkEntity = NetworkEntity(

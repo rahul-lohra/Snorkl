@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.data.local.dao
+package rahul.lohra.snorkl.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import rahul.lohra.networkmonitor.data.local.entities.NetworkEntity
+import rahul.lohra.snorkl.data.local.entities.NetworkEntity
 
 @Dao
 interface NetworkLogDao {

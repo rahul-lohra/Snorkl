@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.data
+package rahul.lohra.snorkl.data
 
 import kotlinx.serialization.Serializable
 import java.util.UUID

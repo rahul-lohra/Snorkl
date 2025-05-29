@@ -19,9 +19,9 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AndroidNetworkMonitor"
+rootProject.name = "Snorkl"
 include(":app")
-include(":networkmonitor")
+include(":snorkl")
 //include(":network")
 //include(":network-noop")
 //include(":data")

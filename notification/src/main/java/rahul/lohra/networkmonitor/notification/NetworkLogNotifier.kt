@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.notification
+package rahul.lohra.snorkl.notification
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -61,7 +61,7 @@ object NetworkLogNotifier {
     }
 
     private fun getPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, Class.forName("rahul.lohra.networkmonitor.presentation.ui.NetworkMonitorActivity")).apply {
+        val intent = Intent(context, Class.forName("rahul.lohra.snorkl.presentation.ui.NetworkMonitorActivity")).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         return PendingIntent.getActivity(

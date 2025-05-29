@@ -1,4 +1,4 @@
-package rahul.lohra.networkmonitor.notification
+package rahul.lohra.snorkl.notification
 
 import android.content.Context
 import android.net.Uri
@@ -6,8 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import rahul.lohra.networkmonitor.data.local.db.DatabaseProvider
-import rahul.lohra.networkmonitor.data.local.entities.NetworkType
+import rahul.lohra.snorkl.data.local.db.DatabaseProvider
+import rahul.lohra.snorkl.data.local.entities.NetworkType
 import java.util.Locale
 
 object NotificationSdkInitializer {

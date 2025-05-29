@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "rahul.lohra.networkmonitor.data"
+    namespace = "rahul.lohra.snorkl.data"
     compileSdk = 35
 
     defaultConfig {
