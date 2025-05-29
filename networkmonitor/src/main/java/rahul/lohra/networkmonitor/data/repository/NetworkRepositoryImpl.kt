@@ -21,6 +21,10 @@ class NetworkRepositoryImpl(
         dao.clear()
     }
 
+    override suspend fun delete(id: String) {
+        dao.delete(id)
+    }
+
     override suspend fun getAllLogs(): List<NetworkEntity> {
         return dao.getAll()
     }

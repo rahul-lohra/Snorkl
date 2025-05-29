@@ -22,12 +22,14 @@ interface NetworkLogDao {
     @Query("DELETE FROM network_logs")
     suspend fun clear()
 
+    @Query("DELETE FROM network_logs WHERE id = :id")
+    suspend fun delete(id: String)
+
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
     fun getPaged(offset: Int, limit: Int): PagingSource<Int, NetworkEntity>
 
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC")
     fun getPaged(): PagingSource<Int, NetworkEntity>
-
 
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC LIMIT 1")
     fun getLatestNetworkLog(): Flow<NetworkEntity?>

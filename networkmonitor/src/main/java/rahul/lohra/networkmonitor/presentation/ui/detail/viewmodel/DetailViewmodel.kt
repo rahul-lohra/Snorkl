@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import rahul.lohra.networkmonitor.NetworkListItem
 import rahul.lohra.networkmonitor.data.local.entities.NetworkType
 import rahul.lohra.networkmonitor.data.mappers.toWebSocketLogEntry
+import rahul.lohra.networkmonitor.domain.usecas.ClearDataUseCase
 import rahul.lohra.networkmonitor.domain.usecas.ExportData
 import rahul.lohra.networkmonitor.domain.usecas.RequestResponseRetrieverUseCase
 import rahul.lohra.networkmonitor.domain.usecas.ShareUseCase
@@ -21,17 +22,22 @@ import rahul.lohra.networkmonitor.presentation.data.UiInitial
 import rahul.lohra.networkmonitor.presentation.data.UiLoading
 import rahul.lohra.networkmonitor.presentation.data.UiState
 import rahul.lohra.networkmonitor.presentation.data.UiSuccess
+import rahul.lohra.networkmonitor.presentation.ui.SharableDeletable
 import rahul.lohra.networkmonitor.presentation.ui.detail.DetailBodyUiEvent
 import rahul.lohra.networkmonitor.presentation.ui.detail.DetailScreenUiModel
+import rahul.lohra.networkmonitor.presentation.ui.detail.ToolbarUiEvent
 import rahul.lohra.networkmonitor.presentation.ui.detail.toRestApiDetails
 import rahul.lohra.networkmonitor.presentation.ui.detail.toWsDetails
 
-class DetailViewmodel (
+class DetailViewmodel(
     private val useCase: RequestResponseRetrieverUseCase,
+    private val clearDataUseCase: ClearDataUseCase,
     private val shareUseCase: ShareUseCase,
+    private val id:String,
     private val ioDispatcher: CoroutineDispatcher,
     private val defaultDispatcher: CoroutineDispatcher,
-): ViewModel() {
+) : ViewModel(), SharableDeletable {
+
     companion object {
         const val KEY = "DetailViewmodel"
     }
@@ -43,51 +49,60 @@ class DetailViewmodel (
     private val _detailScreenData = MutableStateFlow<UiState<DetailScreenUiModel>>(UiInitial())
     val detailScreenData: SharedFlow<UiState<DetailScreenUiModel>> = _detailScreenData
 
-//    val allUiNetworkLogs: Flow<PagingData<NetworkListItem>> = useCase.getPagedLogs()
-//        .cachedIn(viewModelScope)
-//
-//    val httpNetworkLogs: Flow<PagingData<NetworkListItem>> = useCase.getFilteredNetworkLogs { it.networkType == "rest" }
-//        .cachedIn(viewModelScope)
-//
-//    val wsNetworkLogs: Flow<PagingData<NetworkListItem>> = useCase.getFilteredNetworkLogs { it.networkType == "ws" }
-//        .cachedIn(viewModelScope)
-
     private val _shareIntentFlow = MutableSharedFlow<ExportData>()
-    val shareIntentFlow : Flow<ExportData> = _shareIntentFlow
+    override val shareIntentFlow: Flow<ExportData> = _shareIntentFlow
 
     private val _exportFromDeviceFlow = MutableSharedFlow<Pair<ExportData, ExportData>>()
-    val exportFromDeviceFlow : Flow<Pair<ExportData, ExportData>> = _exportFromDeviceFlow
+    override val exportFromDeviceFlow: Flow<Pair<ExportData, ExportData>> = _exportFromDeviceFlow
 
-//    fun setDetailScreenData(networkData: NetworkData) {
-//        viewModelScope.launch {
-//            _detailScreenData.emit(UiSuccess(networkData))
-//        }
-//    }
 
-    fun setDetailScreenData(networkListItem: NetworkListItem) {
-        viewModelScope.launch {
-//            _detailScreenData.emit(UiSuccess(networkData))
+    fun onToolbarUiEvent(event: ToolbarUiEvent) {
+        when (event) {
+            is ToolbarUiEvent.OnSearchClick -> {
+                // Handle search click
+            }
+
+            is ToolbarUiEvent.OnDeleteClick -> {
+                viewModelScope.launch(ioDispatcher) {
+                    clearDataUseCase.delete(event.id)
+                }
+            }
+
+            is ToolbarUiEvent.OnShareJsonClick -> {
+                viewModelScope.launch(ioDispatcher) {
+                    _shareIntentFlow.emit(shareUseCase.shareNetworkLog(event.id,true))
+                }
+            }
+
+            is ToolbarUiEvent.OnShareTextClick -> {
+                viewModelScope.launch(ioDispatcher) {
+                    val intent = shareUseCase.shareNetworkLog(event.id,false)
+                    _shareIntentFlow.emit(intent)
+                }
+            }
+
+            is ToolbarUiEvent.OnExportFromDeviceClick -> {
+                viewModelScope.launch(ioDispatcher) {
+                    val exportData1 = shareUseCase.shareNetworkLog(event.id, true)
+                    val exportData2 = shareUseCase.shareNetworkLog(event.id, false)
+                    _exportFromDeviceFlow.emit(Pair(exportData1, exportData2))
+                }
+            }
         }
     }
 
-    fun makeGetRequest() {
-        viewModelScope.launch {
-            NetworkProvider.getApiService().getHipsterIpsum()
-        }
-    }
-
-    fun onDetailBodyUiEvent(event: DetailBodyUiEvent){
+    fun onDetailBodyUiEvent(event: DetailBodyUiEvent) {
         when (event) {
             is DetailBodyUiEvent.OnGetDetail -> {
-                if(_detailScreenData.value is UiInitial) {
+                if (_detailScreenData.value is UiInitial) {
                     viewModelScope.launch(ioDispatcher) {
                         _detailScreenData.emit(UiLoading())
                         val recordFlow = useCase.getRecord(event.id)
                         recordFlow.collectLatest {
                             val networkType = NetworkType.fromTitle(it.networkType)
                             val result = when (networkType) {
-                                NetworkType.WEBSOCKET->  it.toWebSocketLogEntry().toWsDetails()
-                                NetworkType.REST->  it.toRestApiDetails()
+                                NetworkType.WEBSOCKET -> it.toWebSocketLogEntry().toWsDetails()
+                                NetworkType.REST -> it.toRestApiDetails()
                                 null -> {
                                     throw RuntimeException("Only two types of network are registered")
                                 }

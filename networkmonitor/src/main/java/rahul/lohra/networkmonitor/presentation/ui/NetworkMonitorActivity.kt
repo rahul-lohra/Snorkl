@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import rahul.lohra.networkmonitor.data.local.db.DatabaseProvider
 import rahul.lohra.networkmonitor.data.repository.NetworkRepositoryImpl
+import rahul.lohra.networkmonitor.domain.usecas.ClearDataUseCase
 import rahul.lohra.networkmonitor.domain.usecas.GetPagedNetworkLogsUseCase
 import rahul.lohra.networkmonitor.domain.usecas.ShareUseCase
 import rahul.lohra.networkmonitor.presentation.ui.detail.DetailsScreen
@@ -36,20 +37,22 @@ class NetworkMonitorActivity : ComponentActivity() {
         val networkRepository = NetworkRepositoryImpl(db.networkLogDao())
         val useCase = GetPagedNetworkLogsUseCase(networkRepository)
         val shareUseCase = ShareUseCase(networkRepository)
+        val clearDataUseCase = ClearDataUseCase(networkRepository)
 
         setContent {
             val viewModel: NetworkMonitorViewmodel = viewModel(
                 key = NetworkMonitorViewmodel.KEY,
-                factory = NetworkMonitorViewmodelFactory(useCase, shareUseCase)
+                factory = NetworkMonitorViewmodelFactory(useCase, clearDataUseCase, shareUseCase)
             )
             CompositionLocalProvider(LocalNetworkMonitorViewModel provides viewModel) {
-                MyMonitorTheme {
-                    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-                        NetworkMonitorToolbarRoot()
-                    }) { innerPadding ->
-                        Root(modifier = Modifier.padding(innerPadding))
-                    }
-                } // No need to pass the VM here
+                Root(modifier = Modifier)
+//                MyMonitorTheme {
+//                    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+//                        NetworkMonitorToolbarRoot()
+//                    }) { innerPadding ->
+//
+//                    }
+//                } // No need to pass the VM here
             }
 
         }

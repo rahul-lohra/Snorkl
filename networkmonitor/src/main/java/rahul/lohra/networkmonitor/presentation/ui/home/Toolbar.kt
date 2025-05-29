@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,10 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,27 +23,20 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.flowWithLifecycle
-import kotlinx.coroutines.flow.mapNotNull
-import rahul.lohra.networkmonitor.domain.usecas.ExportData
 import rahul.lohra.networkmonitor.presentation.ui.LocalNetworkMonitorViewModel
+import rahul.lohra.networkmonitor.presentation.ui.ShareIntentObserver
+import rahul.lohra.networkmonitor.presentation.ui.ShareMenu
 
 
 @Composable
 fun NetworkMonitorToolbarRoot() {
     val viewModel = LocalNetworkMonitorViewModel.current
-    ShareIntentObserver()
+    ShareIntentObserver(viewModel)
     NetworkMonitorToolbarBody(Modifier.fillMaxWidth(), {
         viewModel.onToolbarUiEvent(HomeToolbarUiEvent.OnSearchClick)
         viewModel.makeGetRequest()
@@ -58,7 +47,7 @@ fun NetworkMonitorToolbarRoot() {
     }, {
         viewModel.onToolbarUiEvent(HomeToolbarUiEvent.OnShareTextClick)
     }, {
-        viewModel.onToolbarUiEvent(HomeToolbarUiEvent.onExportFromDeviceClick)
+        viewModel.onToolbarUiEvent(HomeToolbarUiEvent.OnExportFromDeviceClick)
     })
 
 }
@@ -92,34 +81,7 @@ fun NetworkMonitorToolbarBody(
     )
 }
 
-@Composable
-fun ShareMenu(
-    onShareJsonClick: () -> Unit, onShareTextClick: () -> Unit, onExportFromDeviceClick: () -> Unit
-) {
-    var showShareMenu by remember { mutableStateOf(false) }
 
-    Box {
-        IconButton(onClick = { showShareMenu = true }) {
-            Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
-        }
-
-        DropdownMenu(expanded = showShareMenu, onDismissRequest = { showShareMenu = false }) {
-            DropdownMenuItem(text = { Text("Export as JSON") }, onClick = {
-                showShareMenu = false
-                onShareJsonClick()
-            })
-            DropdownMenuItem(text = { Text("Export as Text") }, onClick = {
-                showShareMenu = false
-                onShareTextClick()
-            })
-
-            DropdownMenuItem(text = { Text("Export from Device") }, onClick = {
-                showShareMenu = false
-                onExportFromDeviceClick()
-            })
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -191,34 +153,5 @@ fun ExtractFileInstructionsBottomSheet(
                 Text("Got It", fontSize = 16.sp)
             }
         }
-    }
-}
-
-@Composable
-fun ShareIntentObserver() {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val viewModel = LocalNetworkMonitorViewModel.current
-
-    var exportData by remember { mutableStateOf<Pair<ExportData, ExportData>?>(null) }
-
-    LaunchedEffect(Unit) {
-        viewModel.shareIntentFlow.flowWithLifecycle(lifecycleOwner.lifecycle)
-            .collect { exportData ->
-                context.startActivity(exportData.intent)
-            }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.exportFromDeviceFlow.flowWithLifecycle(lifecycleOwner.lifecycle).mapNotNull { it }
-            .collect { exportDataPair ->
-                exportData = exportDataPair
-            }
-    }
-
-    if (exportData != null) {
-        ExtractFileInstructionsBottomSheet(textFilePath = exportData!!.first.file.absolutePath,
-            jsonFilePath = exportData!!.second.file.absolutePath,
-            onDismiss = { exportData = null })
     }
 }

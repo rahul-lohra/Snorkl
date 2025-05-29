@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -22,14 +24,23 @@ import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.launch
 import rahul.lohra.networkmonitor.presentation.ui.LocalNetworkMonitorViewModel
+import rahul.lohra.networkmonitor.presentation.ui.MyMonitorTheme
+import rahul.lohra.networkmonitor.presentation.ui.Root
 
 @Composable
 fun HomeScreen(modifier: Modifier, navController: NavController) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-    ) {
-        HomeScreenTabs(modifier, navController)
+    MyMonitorTheme {
+        Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+            NetworkMonitorToolbarRoot()
+        }) { innerPadding ->
+            Column(
+                modifier = modifier.fillMaxSize().padding(innerPadding),
+            ) {
+                HomeScreenTabs(modifier, navController)
+            }
+        }
     }
+
 }
 
 @Composable

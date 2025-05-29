@@ -28,8 +28,4 @@ class GetPagedNetworkLogsUseCase(
                     .filter { filterPredicate(it) }
             }
     }
-
-    suspend fun clearAll() {
-        repository.clearAll()
-    }
 }

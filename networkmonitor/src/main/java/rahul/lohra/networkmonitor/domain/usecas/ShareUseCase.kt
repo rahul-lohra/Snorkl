@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.first
 import rahul.lohra.networkmonitor.core.SdkContextHolder
 import rahul.lohra.networkmonitor.data.local.entities.NetworkEntity
 import rahul.lohra.networkmonitor.data.repository.NetworkRepository
@@ -15,8 +16,17 @@ import java.util.Locale
 class ShareUseCase(private val repository: NetworkRepository) {
 
     suspend fun shareAllNetworkLogs(asJson: Boolean): ExportData {
-        val context = SdkContextHolder.getContext()
         val logs = repository.getAllLogs()
+        return shareLogs(logs, asJson)
+    }
+
+    suspend fun shareNetworkLog(id: String, asJson: Boolean): ExportData {
+        val log = repository.getLog(id).first()
+        return shareLogs(listOf(log), asJson)
+    }
+
+    private suspend fun shareLogs(logs: List<NetworkEntity>, asJson: Boolean): ExportData {
+        val context = SdkContextHolder.getContext()
         val ext = if (asJson) "json" else "text"
         val text = if (asJson) convertLogsToJson(logs) else convertLogsToText(logs)
         val file = saveTextToFile(context, "network_logs", ext, text)

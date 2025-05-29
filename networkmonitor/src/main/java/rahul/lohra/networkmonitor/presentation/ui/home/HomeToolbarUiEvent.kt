@@ -5,5 +5,5 @@ sealed class HomeToolbarUiEvent {
     object OnDeleteClick : HomeToolbarUiEvent()
     object OnShareJsonClick : HomeToolbarUiEvent()
     object OnShareTextClick : HomeToolbarUiEvent()
-    object onExportFromDeviceClick : HomeToolbarUiEvent()
+    object OnExportFromDeviceClick : HomeToolbarUiEvent()
 }

@@ -17,7 +17,7 @@ class RestApiDetails(
     val body: String,
     val durationMs: Long,
     val requestBody: String,
-):DetailScreenUiModel
+) : DetailScreenUiModel
 
 class WsDetails(
     override val id: String,
@@ -30,14 +30,15 @@ class WsDetails(
     val eventType: String,
     val messageType: String,
     val messageSize: String,
-):DetailScreenUiModel
+    val connectionId: String,
+) : DetailScreenUiModel
 
 interface DetailScreenUiModel {
-    val id:String
-    val networkType:String
+    val id: String
+    val networkType: String
 }
 
-fun NetworkEntity.toRestApiDetails()= RestApiDetails (
+fun NetworkEntity.toRestApiDetails() = RestApiDetails(
     id = id,
     timestamp = timestamp,
     requestUrl = requestUrl,
@@ -50,7 +51,8 @@ fun NetworkEntity.toRestApiDetails()= RestApiDetails (
     requestBody = requestBody ?: "",
     networkType = networkType
 )
-fun WebSocketLogEntry.toWsDetails() = WsDetails (
+
+fun WebSocketLogEntry.toWsDetails() = WsDetails(
     id = id,
     timestamp = timestamp,
     requestUrl = requestUrl,
@@ -58,8 +60,9 @@ fun WebSocketLogEntry.toWsDetails() = WsDetails (
     durationMs = 0L,
     direction = direction?.name ?: "",
     eventType = eventType.name,
-    messageType = messageType?.name?:"",
-    messageSize = messageSize?.toString()?:"",
+    messageType = messageType?.name ?: "",
+    messageSize = messageSize?.toString() ?: "0",
     networkType = networkType,
+    connectionId = connectionId,
 )
 

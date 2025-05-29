@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import rahul.lohra.networkmonitor.NetworkListItem
 import rahul.lohra.networkmonitor.data.NetworkData
+import rahul.lohra.networkmonitor.domain.usecas.ClearDataUseCase
 import rahul.lohra.networkmonitor.domain.usecas.ExportData
 import rahul.lohra.networkmonitor.domain.usecas.GetPagedNetworkLogsUseCase
 import rahul.lohra.networkmonitor.domain.usecas.ShareUseCase
@@ -20,14 +21,16 @@ import rahul.lohra.networkmonitor.network.NetworkProvider
 import rahul.lohra.networkmonitor.presentation.data.UiInitial
 import rahul.lohra.networkmonitor.presentation.data.UiState
 import rahul.lohra.networkmonitor.presentation.data.UiSuccess
+import rahul.lohra.networkmonitor.presentation.ui.SharableDeletable
 import rahul.lohra.networkmonitor.presentation.ui.home.HomeToolbarUiEvent
 
 class NetworkMonitorViewmodel (
     private val useCase: GetPagedNetworkLogsUseCase,
+    private val clearDataUseCase: ClearDataUseCase,
     private val shareUseCase: ShareUseCase,
     private val ioDispatcher: CoroutineDispatcher,
     private val defaultDispatcher: CoroutineDispatcher,
-): ViewModel() {
+): ViewModel(), SharableDeletable {
     companion object {
         const val KEY = "NetworkMonitorViewmodel"
     }
@@ -49,10 +52,10 @@ class NetworkMonitorViewmodel (
         .cachedIn(viewModelScope)
 
     private val _shareIntentFlow = MutableSharedFlow<ExportData>()
-    val shareIntentFlow : Flow<ExportData> = _shareIntentFlow
+    override val shareIntentFlow : Flow<ExportData> = _shareIntentFlow
 
     private val _exportFromDeviceFlow = MutableSharedFlow<Pair<ExportData, ExportData>>()
-    val exportFromDeviceFlow : Flow<Pair<ExportData, ExportData>> = _exportFromDeviceFlow
+    override val exportFromDeviceFlow : Flow<Pair<ExportData, ExportData>> = _exportFromDeviceFlow
 
 
     fun setDetailScreenData(networkData: NetworkData) {
@@ -80,7 +83,7 @@ class NetworkMonitorViewmodel (
             }
             is HomeToolbarUiEvent.OnDeleteClick -> {
                 viewModelScope.launch(ioDispatcher) {
-                    useCase.clearAll()
+                    clearDataUseCase.clearAll()
                 }
             }
             is HomeToolbarUiEvent.OnShareJsonClick -> {
@@ -93,7 +96,7 @@ class NetworkMonitorViewmodel (
                     val intent = shareUseCase.shareAllNetworkLogs(false)
                     _shareIntentFlow.emit(intent)
                 }
-            }is HomeToolbarUiEvent.onExportFromDeviceClick -> {
+            }is HomeToolbarUiEvent.OnExportFromDeviceClick -> {
                 viewModelScope.launch(ioDispatcher) {
                     val exportData1 = shareUseCase.shareAllNetworkLogs(true)
                     val exportData2 =shareUseCase.shareAllNetworkLogs(false)
