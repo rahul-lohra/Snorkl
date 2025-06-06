@@ -65,7 +65,7 @@ fun NetworkMonitorToolbarBody(
     val context = LocalContext.current
     val appName = context.applicationInfo.loadLabel(context.packageManager).toString()
 
-    TopAppBar(modifier = modifier, title = { Text(appName) }, actions = {
+    TopAppBar(modifier = modifier, title = { Text(appName, fontSize = 16.sp) }, actions = {
         IconButton(onClick = onSearchClick) {
             Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
         }

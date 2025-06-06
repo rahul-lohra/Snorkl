@@ -21,7 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import rahul.lohra.snorkl.Util
+import rahul.lohra.networkmonitor.RestClient
+import rahul.lohra.networkmonitor.WebsocketClient
 import rahul.lohra.snorkl.presentation.ui.NetworkMonitorActivity
 import rahul.lohra.snorkl.ui.theme.AndroidNetworkMonitorTheme
 

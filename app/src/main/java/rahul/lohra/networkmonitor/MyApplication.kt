@@ -1,4 +1,4 @@
-package rahul.lohra.snorkl
+package rahul.lohra.networkmonitor
 
 import android.app.Application
 import android.util.Log
@@ -10,15 +10,27 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
+import rahul.lohra.snorkl.InspectingWebSocketListener
+import rahul.lohra.snorkl.NetworkLoggerInterceptor
+import rahul.lohra.snorkl.Util
+import rahul.lohra.snorkl.WebSocketServerManager
 import rahul.lohra.snorkl.network.NetworkWebSocketListener
 import java.io.IOException
+import java.net.ServerSocket
 
 class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        WebSocketServerManager.startServer(this, 9396)
-        Log.d("Inspector", "Phone IP: ${Util.getLocalIpAddress(this)}")
+        val availablePort = findAvailablePort()
+        WebSocketServerManager.startServer(this, availablePort)
+        Log.d("Inspector", "port: $availablePort, Phone IP: ${Util.getLocalIpAddress(this)}")
+    }
+
+    private fun findAvailablePort(): Int {
+        ServerSocket(0).use { socket ->
+            return socket.localPort
+        }
     }
 }
 
