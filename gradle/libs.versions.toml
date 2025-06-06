@@ -24,6 +24,7 @@ paging = "3.1.1"
 pagingCompose = "3.3.6"
 androidLifecycleViewmodelComposeVersion="2.8.6"
 uiTooling = "1.8.2"
+vaniktechMavenPublishVersion = "0.32.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -75,4 +76,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 maven-publish = { id = "maven-publish" }
+com-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vaniktechMavenPublishVersion" }
 
