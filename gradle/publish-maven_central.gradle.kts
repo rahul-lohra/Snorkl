@@ -5,7 +5,7 @@ apply(plugin = "com.vanniktech.maven.publish")
 
 val artifactVersion = project.property("VERSION_NAME") as String
 val artifactGroupId = project.property("GROUP_ID") as String
-val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/API-WebSocket-Viewer")
+val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/Snorkl")
 
 val localProperties = Properties().apply {
     load(rootProject.file("local.properties").inputStream())
@@ -32,7 +32,7 @@ mavenPublishing {
     pom {
         name.set("API WebSocket Viewer")
         description.set("A developer tool for inspecting APIs and WebSocket connections.")
-        url.set("https://github.com/rahul-lohra/API-WebSocket-Viewer")
+        url.set("https://github.com/rahul-lohra/Snorkl")
         licenses {
             license {
                 name.set("Apache License 2.0")
@@ -47,9 +47,9 @@ mavenPublishing {
             }
         }
         scm {
-            connection.set("scm:git:git://github.com/rahul-lohra/API-WebSocket-Viewer.git")
-            developerConnection.set("scm:git:ssh://github.com:rahul-lohra/API-WebSocket-Viewer.git")
-            url.set("https://github.com/rahul-lohra/API-WebSocket-Viewer")
+            connection.set("scm:git:git://github.com/rahul-lohra/Snorkl.git")
+            developerConnection.set("scm:git:ssh://github.com:rahul-lohra/Snorkl.git")
+            url.set("https://github.com/rahul-lohra/Snorkl")
         }
     }
 }

@@ -5,7 +5,7 @@ apply(plugin = "maven-publish")
 val artifactVersion = project.property("VERSION_NAME") as String
 val artifactGroupId = project.property("GROUP_ID") as String
 
-val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/API-WebSocket-Viewer")
+val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/Snorkl")
 val shouldSign =
     (System.getenv("CI") == "true") || (project.findProperty("enableSigning") == "true")
 
@@ -23,9 +23,9 @@ afterEvaluate {
                 version = artifactVersion
 
                 pom {
-                    name.set("API-WebSocket-Viewer")
+                    name.set("Snorkl")
                     description.set("A library to view and analyze API & WebSocket calls.")
-                    url.set("https://github.com/rahul-lohra/API-WebSocket-Viewer")
+                    url.set("https://github.com/rahul-lohra/Snorkl")
                     licenses {
                         license {
                             name.set("The Apache License, Version 2.0")
@@ -40,9 +40,9 @@ afterEvaluate {
                         }
                     }
                     scm {
-                        connection.set("scm:git:git://github.com/rahul-lohra/API-WebSocket-Viewer.git")
-                        developerConnection.set("scm:git:ssh://github.com:rahul-lohra/API-WebSocket-Viewer.git")
-                        url.set("https://github.com/rahul-lohra/API-WebSocket-Viewer")
+                        connection.set("scm:git:git://github.com/rahul-lohra/Snorkl.git")
+                        developerConnection.set("scm:git:ssh://github.com:rahul-lohra/Snorkl.git")
+                        url.set("https://github.com/rahul-lohra/Snorkl")
                     }
                 }
             }
