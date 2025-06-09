@@ -2,15 +2,15 @@ package rahul.lohra.snorkl.data
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class WebsocketData(
-    val requestUrl: String,
-    val direction: String, // e.g., "Request", "Response", "WebSocket OPEN", etc.
-    val body: String? = null,
-    val timestamp: Long = System.currentTimeMillis(),
-    val responseCode: Int = 0,
-    val networkType: String = "ws"
-): NetworkData()
+//@Serializable
+//data class WebsocketData(
+//    val requestUrl: String,
+//    val direction: String, // e.g., "Request", "Response", "WebSocket OPEN", etc.
+//    val body: String? = null,
+//    val timestamp: Long = System.currentTimeMillis(),
+//    val responseCode: Int = 0,
+//    val networkType: String = "ws"
+//): NetworkData()
 
 @Serializable
 data class WebSocketLogEntry(

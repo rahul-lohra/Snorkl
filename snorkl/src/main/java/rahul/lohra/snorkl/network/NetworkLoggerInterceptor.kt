@@ -1,5 +1,6 @@
 package rahul.lohra.snorkl.network
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,7 @@ import rahul.lohra.snorkl.data.local.dao.NetworkLogDao
 import rahul.lohra.snorkl.data.local.db.DatabaseProvider
 import rahul.lohra.snorkl.data.mappers.toEntity
 
-class NetworkLoggerInterceptor() : Interceptor {
+class NetworkLoggerInterceptor(private val reportToWebserver: Boolean = true) : Interceptor {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val database = DatabaseProvider.getDatabase()
@@ -55,7 +56,13 @@ class NetworkLoggerInterceptor() : Interceptor {
             networkType = "rest"
         )
         scope.launch {
-            networkLogDao.insert(logData.toEntity())
+            val entity = logData.toEntity()
+            val recordId = networkLogDao.insert(entity)
+            Log.d("Noob", "RecordId: $recordId")
+            if(reportToWebserver){
+                WebSocketServerManager.send(entity) //TODO Rahul, do it later
+            }
+
         }
         return response
     }

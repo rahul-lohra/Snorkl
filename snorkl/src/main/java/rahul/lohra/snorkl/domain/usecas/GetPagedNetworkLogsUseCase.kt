@@ -16,7 +16,14 @@ class GetPagedNetworkLogsUseCase(
     private val repository: NetworkRepository
 ) {
     fun getPagedLogs(): Flow<PagingData<NetworkListItem>> {
-        return repository.getPagedNetworkLogs().flow.map { it.map { if (it.networkType == NetworkType.REST.title) it.toRestApiListItem() else it.toWebSocketLogEntry()?.toWebsocketListItem()!! } }
+        return repository.getPagedNetworkLogs().flow.map {
+            it.map {
+                if (it.networkType == NetworkType.REST.title)
+                    it.toRestApiListItem()
+                else
+                    it.toWebSocketLogEntry()?.toWebsocketListItem()!!
+            }
+        }
     }
 
     fun getFilteredNetworkLogs(filterPredicate: (NetworkListItem) -> Boolean): Flow<PagingData<NetworkListItem>> {
@@ -24,7 +31,10 @@ class GetPagedNetworkLogsUseCase(
             .flow
             .map { pagingData ->
                 pagingData
-                    .map { if (it.networkType == NetworkType.REST.title) it.toRestApiListItem() else it.toWebSocketLogEntry()?.toWebsocketListItem()!! }
+                    .map {
+                        if (it.networkType == NetworkType.REST.title) it.toRestApiListItem() else it.toWebSocketLogEntry()
+                            ?.toWebsocketListItem()!!
+                    }
                     .filter { filterPredicate(it) }
             }
     }

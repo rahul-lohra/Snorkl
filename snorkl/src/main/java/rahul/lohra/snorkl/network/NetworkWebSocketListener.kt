@@ -12,12 +12,11 @@ import rahul.lohra.snorkl.data.WebSocketEventType
 import rahul.lohra.snorkl.data.WebSocketLogEntry
 import rahul.lohra.snorkl.data.WebSocketMessageDirection
 import rahul.lohra.snorkl.data.WebSocketMessageType
-import rahul.lohra.snorkl.data.WebsocketData
 import rahul.lohra.snorkl.data.local.db.DatabaseProvider
 import rahul.lohra.snorkl.data.mappers.toEntity
 import java.util.UUID
 
-class NetworkWebSocketListener() : WebSocketListener() {
+class NetworkWebSocketListener(private val reportToWebserver: Boolean = true) : WebSocketListener() {
 
     private val database = DatabaseProvider.getDatabase()
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -94,13 +93,13 @@ class NetworkWebSocketListener() : WebSocketListener() {
 
 //        Log.d("InspectingWebSocketListener", "sendLog: direction:$direction, body:$body")
 
-        val log = WebsocketData(
-            requestUrl = url,
-            direction = direction,
-            body = body,
-            timestamp = System.currentTimeMillis(),
-            networkType = "ws"
-        )
+//        val log = WebsocketData(
+//            requestUrl = url,
+//            direction = direction,
+//            body = body,
+//            timestamp = System.currentTimeMillis(),
+//            networkType = "ws"
+//        )
 
         scope.launch {
 //            database.networkLogDao().insert(log.toEntity())
@@ -129,7 +128,11 @@ class NetworkWebSocketListener() : WebSocketListener() {
             metadata = mapOf()
         )
         scope.launch {
-            database.networkLogDao().insert(logEntry.toEntity())
+            val entity = logEntry.toEntity()
+            database.networkLogDao().insert(entity)
+            if(reportToWebserver){
+                WebSocketServerManager.send(entity)
+            }
         }
 
     }

@@ -2,8 +2,10 @@ package rahul.lohra.snorkl.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
+@Serializable //For WebSocketServerManager
 @Entity(tableName = "network_logs")
 data class NetworkEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),

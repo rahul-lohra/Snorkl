@@ -2,6 +2,7 @@ package rahul.lohra.networkmonitor
 
 import android.app.Application
 import android.util.Log
+import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -10,10 +11,9 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
-import rahul.lohra.snorkl.InspectingWebSocketListener
-import rahul.lohra.snorkl.NetworkLoggerInterceptor
 import rahul.lohra.snorkl.Util
-import rahul.lohra.snorkl.WebSocketServerManager
+import rahul.lohra.snorkl.network.WebSocketServerManager
+import rahul.lohra.snorkl.network.NetworkLoggerInterceptor
 import rahul.lohra.snorkl.network.NetworkWebSocketListener
 import java.io.IOException
 import java.net.ServerSocket
@@ -23,6 +23,9 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         val availablePort = findAvailablePort()
+        runBlocking {
+            Util.selectedPortAddress.emit(availablePort)
+        }
         WebSocketServerManager.startServer(this, availablePort)
         Log.d("Inspector", "port: $availablePort, Phone IP: ${Util.getLocalIpAddress(this)}")
     }
@@ -87,7 +90,6 @@ object WebsocketClient {
         }
         val wrappedListener = MySocketListenerRegistry.wrap(listener)
         MySocketListenerRegistry.register(NetworkWebSocketListener())
-        MySocketListenerRegistry.register(InspectingWebSocketListener())
         client.newWebSocket(request, wrappedListener)
     }
 

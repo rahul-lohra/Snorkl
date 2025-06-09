@@ -11,7 +11,7 @@ import rahul.lohra.snorkl.data.local.entities.NetworkEntity
 @Dao
 interface NetworkLogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: NetworkEntity)
+    suspend fun insert(entity: NetworkEntity): Long
 
     @Query("SELECT * FROM network_logs ORDER BY timestamp DESC")
     fun getAllAsFlow(): Flow<List<NetworkEntity>>

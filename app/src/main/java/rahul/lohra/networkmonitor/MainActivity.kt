@@ -16,11 +16,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import rahul.lohra.snorkl.Util
 import rahul.lohra.snorkl.presentation.ui.NetworkMonitorActivity
 import rahul.lohra.snorkl.ui.theme.AndroidNetworkMonitorTheme
@@ -58,8 +60,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     ) {
         val context = LocalContext.current
         val ipAddress = Util.getLocalIpAddress(context)
+        val portAddress by Util.selectedPortAddress.collectAsStateWithLifecycle()
         Text(
-            text = "Phone IP: $ipAddress",
+            text = "Phone IP: $ipAddress:${portAddress}",
             modifier = modifier
         )
         Spacer(modifier = Modifier.height(8.dp))

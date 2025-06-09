@@ -1,4 +1,4 @@
-package rahul.lohra.snorkl
+package rahul.lohra.snorkl.network
 
 import android.content.Context
 import android.content.res.AssetManager
@@ -26,7 +26,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.encodeToString
 import rahul.lohra.snorkl.data.RestApiData
-import rahul.lohra.snorkl.data.WebsocketData
+import rahul.lohra.snorkl.data.local.entities.NetworkEntity
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Collections
@@ -56,7 +56,7 @@ object WebSocketServerManager {
         }
     }
 
-    fun send(log: WebsocketData) {
+    fun send(log: NetworkEntity) {
         // Launching in global scope — you can improve this by passing a coroutine scope
         coroutineScope.launch {
             val json = kotlinx.serialization.json.Json.encodeToString(log)
@@ -88,7 +88,7 @@ object WebSocketServerManager {
 
                 routing {
                     webSocket("/logs") {
-                        WebSocketServerManager.register(this)
+                        register(this)
                         try {
                             Log.d("Noob", "inside /logs")
                             send(Frame.Text("SERVER: Connection established"))
@@ -99,7 +99,7 @@ object WebSocketServerManager {
                         } catch (e: Exception) {
                             e.printStackTrace()
                         } finally {
-                            WebSocketServerManager.unregister(this)
+                            unregister(this)
                         }
                     }
 

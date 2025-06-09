@@ -9,10 +9,7 @@ import rahul.lohra.snorkl.data.WebSocketEventType
 import rahul.lohra.snorkl.data.WebSocketLogEntry
 import rahul.lohra.snorkl.data.WebSocketMessageDirection
 import rahul.lohra.snorkl.data.WebSocketMessageType
-import rahul.lohra.snorkl.data.WebsocketData
 import rahul.lohra.snorkl.data.local.entities.NetworkEntity
-import rahul.lohra.snorkl.data.local.entities.NetworkType
-import java.util.UUID
 
 fun RestApiData.toEntity(): NetworkEntity = NetworkEntity(
     id = id,
@@ -35,26 +32,26 @@ fun RestApiData.toEntity(): NetworkEntity = NetworkEntity(
     metaData = null
 )
 
-fun WebsocketData.toEntity(): NetworkEntity = NetworkEntity(
-    id = UUID.randomUUID().toString(),
-    timestamp = timestamp,
-    requestUrl = requestUrl,
-    method = null,
-    requestHeaders = null,
-    responseCode = responseCode,
-    responseHeaders = null,
-    body = body,
-    durationMs = null,
-    requestBody = null,
-    direction = direction,
-    eventType = null,
-    networkType = "ws",
-    responseSize = body?.length,
-    error = null,
-    messageType = null,
-    connectionId = null,
-    metaData = null
-)
+//fun WebsocketData.toEntity(): NetworkEntity = NetworkEntity(
+//    id = UUID.randomUUID().toString(),
+//    timestamp = timestamp,
+//    requestUrl = requestUrl,
+//    method = null,
+//    requestHeaders = null,
+//    responseCode = responseCode,
+//    responseHeaders = null,
+//    body = body,
+//    durationMs = null,
+//    requestBody = null,
+//    direction = direction,
+//    eventType = null,
+//    networkType = "ws",
+//    responseSize = body?.length,
+//    error = null,
+//    messageType = null,
+//    connectionId = null,
+//    metaData = null
+//)
 
 fun WebSocketLogEntry.toEntity(): NetworkEntity = NetworkEntity(
     id = id,
@@ -110,15 +107,15 @@ fun NetworkEntity.toWebSocketLogEntry(): WebSocketLogEntry =
             metadata = Gson().fromJson(this.metaData, object : TypeToken<Map<String, String>>() {}.type)
         )
 
-fun NetworkEntity.toWebsocketData(): WebsocketData? =
-    if (networkType == "ws") {
-        WebsocketData(
-            requestUrl = requestUrl,
-            direction = direction ?: "",
-            body = body,
-            timestamp = timestamp,
-            responseCode = responseCode,
-            networkType = "ws"
-        )
-    } else null
+//fun NetworkEntity.toWebsocketData(): WebsocketData? =
+//    if (networkType == "ws") {
+//        WebsocketData(
+//            requestUrl = requestUrl,
+//            direction = direction ?: "",
+//            body = body,
+//            timestamp = timestamp,
+//            responseCode = responseCode,
+//            networkType = "ws"
+//        )
+//    } else null
 

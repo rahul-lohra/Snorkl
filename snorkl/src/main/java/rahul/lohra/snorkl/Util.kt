@@ -3,11 +3,15 @@ package rahul.lohra.snorkl
 import android.content.Context
 import android.content.Intent
 import android.net.wifi.WifiManager
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 object Util {
+
+    val selectedPortAddress = MutableStateFlow(0)
+
     fun getLocalIpAddress(context: Context): String? {
         val wm = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val ip = wm.connectionInfo.ipAddress
