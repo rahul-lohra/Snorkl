@@ -17,7 +17,7 @@
         android:theme="@style/Theme.AndroidNetworkMonitor"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="rahul.lohra.networkmonitor.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AndroidNetworkMonitor">
             <intent-filter>
