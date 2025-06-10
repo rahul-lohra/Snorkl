@@ -4,10 +4,14 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.os.Build
 import android.util.Log
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.content.resources
+import io.ktor.server.http.content.static
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -103,8 +107,42 @@ object WebSocketServerManager {
                         }
                     }
 
+
+                    get("/assets/{path...}") {
+                        val path = call.parameters.getAll("path")?.joinToString("/") ?: return@get call.respond(HttpStatusCode.BadRequest)
+                        val assetPath = "web2/assets/$path"
+
+                        val result = getTextFromAsset(context.assets, assetPath)
+                        result.onSuccess {
+                            val contentType = when {
+                                path.endsWith(".js") -> ContentType.Application.JavaScript
+                                path.endsWith(".css") -> ContentType.Text.CSS
+                                path.endsWith(".svg") -> ContentType.Image.SVG
+                                path.endsWith(".map") -> ContentType.Application.Json
+                                else -> ContentType.Application.OctetStream
+                            }
+                            call.respondText(it, contentType)
+                        }.onFailure {
+                            call.respondText("Not Found", ContentType.Text.Plain, HttpStatusCode.NotFound)
+                        }
+                    }
+
                     get("/") {
                         call.respond("Hello world")
+                    }
+
+                    get("/new") {
+                        val content = getTextFromAsset(context.assets,"web2/index.html")
+                        content.onSuccess {
+                            call.respondText(it, io.ktor.http.ContentType.Text.Html, HttpStatusCode.OK)
+                        }
+                        content.onFailure {
+                            call.respondText(
+                                it.message ?: "",
+                                io.ktor.http.ContentType.Text.Plain,
+                                io.ktor.http.HttpStatusCode.InternalServerError
+                            )
+                        }
                     }
                     get("/inspector") {
                         val content = getTextFromAsset(context.assets,"web/index.html")
