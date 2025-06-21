@@ -1,4 +1,19 @@
-# Getting Started
+# Introduction
+
+Its an android network monitor library which currently monitors HTTP and Websocket events.
+It exposes 2 interfaces to monitor the network
+1. Android based application
+2. Web based application
+
+## Android based application
+
+The activity named `<packagename>.presentation.ui.NetworkMonitorActivity` is responsible for rendering
+for rendering the UI to monitor network activity
+
+## Web based application
+The sdk also create a webserever// TODO
+
+# Usage
 
 Snorkl is distributed through Github. To use it you need to add the following
 
