@@ -82,3 +82,10 @@ Just plug in a new `rahul.lohra.snorkl.network.NetworkWebSocketListener` to your
     val listener = rahul.lohra.snorkl.network.NetworkWebSocketListener()
     webSocket = client.newWebSocket(request, listener)
 ```
+## Release new version
+
+Update `VERSION_NAME` property from [`gradle.properties`](gradle.properties) = 0.0.4-kotlin1.9
+
+```properties
+    VERSION_NAME=0.0.4-kotlin1.9
+```
