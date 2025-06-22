@@ -24,3 +24,4 @@ local.properties
 /.idea/runConfigurations.xml
 /.idea/vcs.xml
 /.history/
+/snorkl-web-app/.vite/
