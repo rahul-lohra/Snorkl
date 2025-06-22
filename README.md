@@ -16,6 +16,8 @@
 - 🔌 **WebSocket Support** - Monitor WebSocket connections and messages
 - 🎯 **Zero Configuration** - Works out of the box with minimal setup
 
+---
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -35,7 +37,7 @@ dependencyResolutionManagement {
 2. Add the dependency to your app's `build.gradle.kts`:
 
 ```kotlin
-implementation("rahul.lohra.snorkl:snorkl:0.0.4-kotlin1.9")
+implementation("rahul.lohra.snorkl:snorkl:0.0.5-kotlin1.9")
 ```
 
 ### Basic Setup
@@ -74,6 +76,8 @@ val listener = rahul.lohra.snorkl.network.NetworkWebSocketListener()
 webSocket = client.newWebSocket(request, listener)
 ```
 
+---
+
 ## 📱 Usage
 
 ### Android UI
@@ -93,15 +97,37 @@ Once your app is running, Snorkl creates a local web server. Check your logcat f
 Inspector D  port: 44241, Phone IP: 192.168.1.6
 ```
 
-Open your browser and navigate to `http://192.168.1.6:44241` to access the web dashboard.
+Open your browser and navigate to `http://192.168.1.6:44241` to access the web dashboard. **⚠️Please use the IP address that is on your log cat** 
 
 ### Available Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `/` | Main dashboard |
-| `/inspector1` | Network monitoring interface |
+| Endpoint            | Description                         |
+|---------------------|-------------------------------------|
+| `/`                 | Main dashboard                      |
+| `/inspector1`       | Network monitoring interface        |
 | `/assets/{path...}` | Static assets for the web interface |
+
+---
+
+## 📸 Snorkl Preview
+
+### 📱 Mobile & 🌐 Web Interfaces
+
+| Platform       |                                    Interface                                    | Description                                  |
+|:---------------|:-------------------------------------------------------------------------------:|:---------------------------------------------|
+| **📱 Android** | <img src="screenshots/mobile/all_tab.jpg" alt="Android Interface" width="200"/> | Native monitoring directly on your device    |
+| **🌐 Web**     |    <img src="screenshots/web/web_all.png" alt="Web Dashboard" width="300"/>     | Browser-based dashboard for desktop analysis |
+
+
+
+### 🔍 Protocol Support
+
+| Protocol         |                                Mobile View                                 |                                    Detail View                                    |
+|:-----------------|:--------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|
+| **🌐 HTTP**      |  <img src="screenshots/mobile/http_tab.jpg" alt="HTTP Tab" width="180"/>   |  <img src="screenshots/mobile/http_detail.jpg" alt="HTTP Details" width="180"/>   |
+| **🔗 WebSocket** | <img src="screenshots/mobile/ws_tab.jpg" alt="WebSocket Tab" width="180"/> | <img src="screenshots/mobile/ws_detail.jpg" alt="WebSocket Details" width="180"/> |
+
+---
 
 ## 🛠️ Development
 
@@ -128,7 +154,7 @@ To release a new version:
 
 1. Update the `VERSION_NAME` in `gradle.properties`:
 ```properties
-VERSION_NAME=0.0.4-kotlin1.9
+VERSION_NAME=0.0.5-kotlin1.9
 ```
 
 2. Create and push a new tag
