@@ -11,7 +11,30 @@ The activity named `<packagename>.presentation.ui.NetworkMonitorActivity` is res
 for rendering the UI to monitor network activity
 
 ## Web based application
-The sdk also create a webserever// TODO
+The sdk also create a webserver such that the user can monitor the network over desktop
+It uses localhost as host 
+
+The port is decided by available ports on Android device:
+
+```kotlin
+class MyApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        val availablePort = findAvailablePort()
+        WebSocketServerManager.startServer(this, availablePort)
+    }
+}
+```
+
+The available paths are as follows:
+
+1. /
+2. /logs
+3. /assets/{path...}
+4. /new
+5. /inspector
+6. /inspector1
 
 # Usage
 
