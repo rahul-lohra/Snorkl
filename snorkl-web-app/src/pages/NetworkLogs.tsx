@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import _, { useState, useEffect } from 'react';
 import { NetworkLogItem } from '../components/NetworkLogItem';
 import { NetworkFilter } from '../components/NetworkFilter';
 import type { NetworkLog } from '../types/NetworkLog';

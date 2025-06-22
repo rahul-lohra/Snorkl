@@ -127,11 +127,7 @@ object WebSocketServerManager {
                         }
                     }
 
-                    get("/") {
-                        call.respond("Hello world")
-                    }
-
-                    get("/new") {
+                    get("/") { //Used in App.tsx
                         val content = getTextFromAsset(context.assets,"web2/index.html")
                         content.onSuccess {
                             call.respondText(it, io.ktor.http.ContentType.Text.Html, HttpStatusCode.OK)
