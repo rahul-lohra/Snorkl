@@ -12,7 +12,12 @@ for rendering the UI to monitor network activity
 
 ## Web based application
 The sdk also create a webserver such that the user can monitor the network over desktop
-It uses localhost as host 
+It uses host as Device local ip address 
+You can find this on the log cat
+
+```shell
+Inspector D  port: 44241, Phone IP: 192.168.1.6
+```
 
 The port is decided by available ports on Android device:
 
@@ -29,12 +34,13 @@ class MyApplication : Application() {
 
 The available paths are as follows:
 
-1. /
-2. /logs
-3. /assets/{path...}
-4. /new
-5. /inspector
-6. /inspector1
+| Path              | Description                               |
+|-------------------|-------------------------------------------|
+| /                 | Title                                     |
+| /new              | In progress                               |
+| /assets/{path...} | Access all assets used internally by /new |
+| /inspector        | Old                                       |
+| /inspector1       | Final output                              |
 
 # Usage
 
