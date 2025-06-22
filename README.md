@@ -35,7 +35,7 @@ dependencyResolutionManagement {
 2. Add the dependency to your app's `build.gradle.kts`:
 
 ```kotlin
-implementation("rahul.lohra.snorkl:snorkl:0.0.4-kotlin1.9")
+implementation("rahul.lohra.snorkl:snorkl:0.0.5-kotlin1.9")
 ```
 
 ### Basic Setup
@@ -128,7 +128,7 @@ To release a new version:
 
 1. Update the `VERSION_NAME` in `gradle.properties`:
 ```properties
-VERSION_NAME=0.0.4-kotlin1.9
+VERSION_NAME=0.0.5-kotlin1.9
 ```
 
 2. Create and push a new tag
