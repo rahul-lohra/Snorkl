@@ -1,6 +1,7 @@
 package rahul.lohra.networkmonitor
 
 import android.app.Application
+import android.content.SharedPreferences
 import android.util.Log
 import kotlinx.coroutines.runBlocking
 import okhttp3.Call
@@ -11,7 +12,10 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
+import rahul.lohra.snorkl.PortManager
 import rahul.lohra.snorkl.Util
+import rahul.lohra.snorkl.data.local.keyvalue.KeyValueStorage
+import rahul.lohra.snorkl.data.local.keyvalue.SnorklSharedPref
 import rahul.lohra.snorkl.network.WebSocketServerManager
 import rahul.lohra.snorkl.network.NetworkLoggerInterceptor
 import rahul.lohra.snorkl.network.NetworkWebSocketListener
@@ -22,18 +26,13 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val availablePort = findAvailablePort()
+        val portManager = PortManager(SnorklSharedPref(this))
+        val availablePort = portManager.findAvailablePort()
         runBlocking {
             Util.selectedPortAddress.emit(availablePort)
         }
         WebSocketServerManager.startServer(this, availablePort)
         Log.d("Inspector", "port: $availablePort, Phone IP: ${Util.getLocalIpAddress(this)}")
-    }
-
-    private fun findAvailablePort(): Int {
-        ServerSocket(0).use { socket ->
-            return socket.localPort
-        }
     }
 }
 
