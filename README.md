@@ -16,8 +16,6 @@
 - 🔌 **WebSocket Support** - Monitor WebSocket connections and messages
 - 🎯 **Zero Configuration** - Works out of the box with minimal setup
 
----
-
 ## 🚀 Quick Start
 
 ### Installation
@@ -76,8 +74,6 @@ val listener = rahul.lohra.snorkl.network.NetworkWebSocketListener()
 webSocket = client.newWebSocket(request, listener)
 ```
 
----
-
 ## 📱 Usage
 
 ### Android UI
@@ -127,8 +123,6 @@ Open your browser and navigate to `http://192.168.1.6:44241` to access the web d
 | **🌐 HTTP**      |  <img src="screenshots/mobile/http_tab.jpg" alt="HTTP Tab" width="180"/>   |  <img src="screenshots/mobile/http_detail.jpg" alt="HTTP Details" width="180"/>   |
 | **🔗 WebSocket** | <img src="screenshots/mobile/ws_tab.jpg" alt="WebSocket Tab" width="180"/> | <img src="screenshots/mobile/ws_detail.jpg" alt="WebSocket Details" width="180"/> |
 
----
-
 ## 🛠️ Development
 
 ### Building the Web Interface
@@ -171,7 +165,5 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 ## 🐛 Issues & Support
 
 If you encounter any issues or have questions, please [open an issue](https://github.com/rahul-lohra/Snorkl/issues) on GitHub.
-
----
 
 Made with ❤️ by [Rahul Lohra](https://github.com/rahul-lohra)
