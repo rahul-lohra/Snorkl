@@ -15,10 +15,15 @@ jobs:
       packages: write
 
     env:
-      GPR_USER: ${{ secrets.GITHUB_ACTOR }}
+      GPR_USER: ${{ secrets.actor }}
       GPR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      - name: Debug credentials
+        run: |
+          echo "GPR_USER: $GPR_USER"
+          echo "GPR_TOKEN starts with: ${GPR_TOKEN:0:10}..."
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -63,6 +68,3 @@ jobs:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: Release ${{ steps.get_version.outputs.version }}
           generate_release_notes: true
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
