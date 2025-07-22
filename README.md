@@ -1,7 +1,7 @@
 # Snorkl 🐙
 
 [//]: # ([![GitHub release]&#40;https://img.shields.io/github/release/rahul-lohra/Snorkl.svg&#41;]&#40;https://github.com/rahul-lohra/Snorkl/releases&#41;)
-[![Release](https://img.shields.io/badge/version-0.0.4--kotlin1.9-orange.svg)](https://github.com/rahul-lohra/Snorkl/packages)
+[![Release](https://img.shields.io/badge/version-0.0.6--kotlin1.9-orange.svg)](https://github.com/rahul-lohra/Snorkl/packages)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.txt)
 
 **Snorkl** is a powerful Android network monitoring library that provides real-time insights into your app's HTTP and WebSocket network activity. Monitor your network traffic through both native Android UI and a convenient web-based dashboard accessible from any device on your local network.
