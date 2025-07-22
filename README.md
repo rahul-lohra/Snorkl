@@ -21,12 +21,19 @@
 ### Installation
 
 1. Add the repository to your `settings.gradle.kts`:
+   
+Kindly create a GitHub Personal Access Token with `read:packages` scope and add use it as `YOUR_GITHUB_USERNAME` and `YOUR_TOKEN`
 
 ```kotlin
 dependencyResolutionManagement {
     repositories {
         maven {
+            name = "GitHubPackagesRahulLohra"
             url = uri("https://maven.pkg.github.com/rahul-lohra/Snorkl")
+            credentials {
+                username = "YOUR_GITHUB_USERNAME"
+                password = "YOUR_TOKEN"
+            }
         }
     }
 }
@@ -36,6 +43,19 @@ dependencyResolutionManagement {
 
 ```kotlin
 implementation("rahul.lohra.snorkl:snorkl:0.0.7-kotlin1.9")
+```
+
+3. Exclude META-INF files
+
+```kotlin
+android {
+    packaging {
+        resources {
+            excludes += "META-INF/io.netty.versions.properties"
+            excludes += "META-INF/INDEX.LIST"
+        }
+    }
+} 
 ```
 
 ### Basic Setup
