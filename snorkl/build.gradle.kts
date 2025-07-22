@@ -8,9 +8,15 @@ plugins {
     alias(libs.plugins.com.google.devtools.ksp)
 }
 // Add this at the top of the file
-val localProperties = Properties().apply {
-    load(rootProject.file("local.properties").inputStream())
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { input ->
+        localProperties.load(input)
+    }
 }
+
 
 android {
     namespace = "rahul.lohra.snorkl"
