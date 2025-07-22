@@ -14,7 +14,16 @@ jobs:
       contents: write
       packages: write
 
+    env:
+      GPR_USER: rahul-lohra
+      GPR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
+      - name: Debug credentials
+        run: |
+          echo "GPR_USER: $GPR_USER"
+          echo "GPR_TOKEN starts with: ${GPR_TOKEN:0:10}..."
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -34,6 +43,9 @@ jobs:
 
       - name: Update version in README.md
         run: python scripts/update_readme_version.py
+
+      - name: Publish Kotlin 1.9 to GitHub Packages
+        run: ./gradlew publishKotlin1.9PublicationToGitHubPackagesRepository --no-daemon
 
       - name: Commit updated README.md
         run: |
@@ -55,8 +67,3 @@ jobs:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: Release ${{ steps.get_version.outputs.version }}
           generate_release_notes: true
-
-      - name: Publish Artifact to GitHub Packages
-        run: ./gradlew publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
