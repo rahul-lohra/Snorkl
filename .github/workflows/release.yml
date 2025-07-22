@@ -33,7 +33,7 @@ jobs:
         run: pip install --upgrade pip
 
       - name: Update version in README.md
-        run: python update_readme_version.py
+        run: python scripts/update_readme_version.py
 
       - name: Commit updated README.md
         run: |
