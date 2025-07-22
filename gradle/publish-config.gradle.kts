@@ -66,10 +66,10 @@ afterEvaluate {
                 url = uri(repoUrl)
 
                 val username = localProperties.getProperty("gpr.user")?.takeIf { it.isNotBlank() }
-                    ?: System.getenv("GPR_USER")?.takeIf { it.isNotBlank() }
+                    ?: System.getenv("GITHUB_ACTOR")?.takeIf { it.isNotBlank() }
 
                 val password = localProperties.getProperty("gpr.token")?.takeIf { it.isNotBlank() }
-                    ?: System.getenv("GPR_TOKEN")?.takeIf { it.isNotBlank() }
+                    ?: System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }
 
                 if (!username.isNullOrBlank() && !password.isNullOrBlank()) {
                     credentials {
