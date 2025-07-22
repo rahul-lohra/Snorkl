@@ -37,6 +37,9 @@ jobs:
 
       - name: Publish Kotlin 1.9 to GitHub Packages
         run: ./gradlew publishKotlin1.9PublicationToGitHubPackagesRepository --no-daemon
+        env:
+          GPR_USER: ${{ secrets.GITHUB_ACTOR }}
+          GPR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit updated README.md
         run: |

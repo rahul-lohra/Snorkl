@@ -63,15 +63,22 @@ afterEvaluate {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = repoUrl
-                credentials {
-                    username = localProperties.getProperty("gpr.user") as String?
-                        ?: System.getenv("GPR_USER")
-                    password = localProperties.getProperty("gpr.token") as String? ?: System.getenv(
-                        "GPR_TOKEN"
-                    )
+                url = uri(repoUrl)
+
+                val username = localProperties.getProperty("gpr.user")?.takeIf { it.isNotBlank() }
+                    ?: System.getenv("GPR_USER")?.takeIf { it.isNotBlank() }
+
+                val password = localProperties.getProperty("gpr.token")?.takeIf { it.isNotBlank() }
+                    ?: System.getenv("GPR_TOKEN")?.takeIf { it.isNotBlank() }
+
+                if (!username.isNullOrBlank() && !password.isNullOrBlank()) {
+                    credentials {
+                        this.username = username
+                        this.password = password
+                    }
                 }
             }
         }
+
     }
 }
