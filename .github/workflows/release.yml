@@ -35,6 +35,9 @@ jobs:
       - name: Update version in README.md
         run: python scripts/update_readme_version.py
 
+      - name: Publish Kotlin 1.9 to GitHub Packages
+        run: ./gradlew publishKotlin1.9PublicationToGitHubPackagesRepository --no-daemon
+
       - name: Commit updated README.md
         run: |
           git config user.name "github-actions[bot]"
@@ -56,7 +59,5 @@ jobs:
           name: Release ${{ steps.get_version.outputs.version }}
           generate_release_notes: true
 
-      - name: Publish Artifact to GitHub Packages
-        run: ./gradlew publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
