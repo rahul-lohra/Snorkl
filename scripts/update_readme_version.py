@@ -20,7 +20,12 @@ def update_readme(old_version, new_version):
     with open("README.md", "r") as f:
         content = f.read()
 
-    updated = content.replace(old_version, new_version)    
+    updated = content.replace(old_version, new_version)
+
+    # update the version badge
+    current_badge = old_version.split("-")[0]+ "--kotlin1.9"
+    new_badge = new_version.split("-")[0] + "--kotlin1.9"
+    updated = updated.replace(current_badge, new_badge)
 
     with open("README.md", "w") as f:
         f.write(updated)
