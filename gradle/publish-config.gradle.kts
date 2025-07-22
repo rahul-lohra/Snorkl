@@ -9,9 +9,15 @@ val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/Snorkl")
 val shouldSign =
     (System.getenv("CI") == "true") || (project.findProperty("enableSigning") == "true")
 
-val localProperties = Properties().apply {
-    load(rootProject.file("local.properties").inputStream())
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { input ->
+        localProperties.load(input)
+    }
 }
+
 
 afterEvaluate {
     extensions.configure<PublishingExtension>("publishing") {

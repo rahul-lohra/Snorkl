@@ -7,9 +7,15 @@ val artifactVersion = project.property("VERSION_NAME") as String
 val artifactGroupId = project.property("GROUP_ID") as String
 val repoUrl = uri("https://maven.pkg.github.com/rahul-lohra/Snorkl")
 
-val localProperties = Properties().apply {
-    load(rootProject.file("local.properties").inputStream())
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { input ->
+        localProperties.load(input)
+    }
 }
+
 
 mavenPublishing {
     signAllPublications.set(
